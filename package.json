@@ -11,6 +11,7 @@
   "dependencies": {
     "@algolia/autocomplete-js": "^1.12.1",
     "@algolia/autocomplete-theme-classic": "^1.12.1",
+    "@builder.io/partytown": "^0.8.1",
     "@cosmicjs/sdk": "^1.0.5",
     "algoliasearch": "^4.20.0",
     "eslint-config-next": "^14.0.3",

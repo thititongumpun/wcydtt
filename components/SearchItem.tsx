@@ -11,7 +11,7 @@ export default function SearchItem({
   return (
     <div className="aa-ItemContent">
       <div className="aa-ItemTitle">
-        <components.Highlight hit={hit} attribute="product_name" />
+        <components.Highlight hit={hit} attribute="title" />
       </div>
     </div>
   );

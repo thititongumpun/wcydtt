@@ -5,15 +5,17 @@ import { getAlgoliaResults } from '@algolia/autocomplete-js';
 import algoliasearch from 'algoliasearch/lite';
 import Autocomplete from './Autocomplete';
 import SearchItem from './SearchItem';
+import { useRouter } from 'next/navigation';
 
 type Props = {};
 
 export const searchClient = algoliasearch(
-  process.env.NEXT_PUBLIC_ALGOLIA_APPID || '',
-  process.env.NEXT_PUBLIC_ALGOLIA_APISECRET || ''
+  process.env.NEXT_PUBLIC_ALGOLIA_APPID ?? '',
+  process.env.NEXT_PUBLIC_ALGOLIA_APISECRET ?? ''
 );
 
 export default function Search({}: Props) {
+  const router = useRouter();
   return (
     <Autocomplete
       classNames={{
@@ -21,11 +23,10 @@ export default function Search({}: Props) {
         item: '',
         input: 'xl:w-full',
         label: '',
-        // button: 'placeholder:opacity-0',
       }}
       getSources={({ query }: { query: string }) => [
         {
-          sourceId: 'products',
+          sourceId: 'posts',
           getItems() {
             return getAlgoliaResults({
               searchClient,
@@ -37,25 +38,21 @@ export default function Search({}: Props) {
               ],
             });
           },
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
-          // onSelect({ item }) {
-          //   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          //   void router.push(`/products/${item.id}`);
-          // },
+          onSelect({ item }) {
+            console.log(item)
+            router.push(`/posts/${item.slug}`);
+          },
 
           templates: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
             item({ item, components }) {
               return <SearchItem hit={item} components={components} />;
             },
           },
 
           params: {
-            attributesToSnippet: ['slug'],
+            attributesToSnippet: ['title'],
             hitsPerPage: 5,
-            attributesToHighlight: ['slug'],
+            attributesToHighlight: ['title'],
           },
         },
       ]}
