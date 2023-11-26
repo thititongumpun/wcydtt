@@ -8,11 +8,11 @@ import AuthorAttribution from './AuthorAttribution';
 import AuthorAvatar from './AuthorAvatar';
 import { sanitize } from 'isomorphic-dompurify';
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post  }: { post: Post }) {
   return (
     <div>
       {post.metadata.hero?.imgix_url && (
-        <Link href={`/posts/${post.slug}`}>
+        <Link href={`/posts/${post.slug}`} data-umami-event={`click-post-card-${post.slug}`}>
           <Image
             width={2800}
             height={400}

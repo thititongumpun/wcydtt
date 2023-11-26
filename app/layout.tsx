@@ -41,6 +41,8 @@ export default async function RootLayout({
           async
           src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
           data-website-id="e8b564dc-9887-4414-b46d-369339dc8f6a"
+          data-cache="true"
+          data-umami-event="click-post-card"
         />
       </body>
     </html>
