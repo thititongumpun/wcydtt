@@ -1,18 +1,24 @@
 {
-  "name": "simple-nextjs-blog",
+  "name": "wcydtt",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
+    "dev:turebo": "next dev --turbo",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
+    "@algolia/autocomplete-js": "^1.12.1",
+    "@algolia/autocomplete-theme-classic": "^1.12.1",
     "@cosmicjs/sdk": "^1.0.5",
+    "algoliasearch": "^4.20.0",
+    "eslint-config-next": "^14.0.3",
     "isomorphic-dompurify": "^1.8.0",
-    "next": "^13.4.4",
-    "react": "18.1.0",
-    "react-dom": "18.1.0",
+    "next": "^14.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "supports-color": "8.1.1",
     "typescript": "^5.0.4"
   },
   "engines": {
@@ -21,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^20.2.5",
     "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",
     "prettier": "^2.8.8",

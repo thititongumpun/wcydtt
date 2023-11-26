@@ -3,7 +3,12 @@
 module.exports = {
   swcMinify: true,
   images: {
-    domains: ['imgix.cosmicjs.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'imgix.cosmicjs.com',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
   },
 };

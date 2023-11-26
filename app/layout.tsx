@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/globals.css';
+import '@algolia/autocomplete-theme-classic';
 import { getGlobalData } from '../lib/cosmic';
 import Generator from 'next/font/local';
 // import Banner from '../components/Banner';
