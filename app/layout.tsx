@@ -6,8 +6,8 @@ import Generator from 'next/font/local';
 // import Banner from '../components/Banner';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-// import Script from 'next/script';
-// import { Partytown } from '@builder.io/partytown/react';
+import Script from 'next/script';
+import { Partytown } from '@builder.io/partytown/react';
 
 const sans = Generator({
   src: '../fonts/Generator-Variable.ttf',
@@ -36,7 +36,8 @@ export default async function RootLayout({
         <Header name={siteData} />
         {children}
         <Footer />
-        {/* <Partytown debug={true} forward={['dataLayer.push']} /> */}
+        <Partytown debug={true} forward={['dataLayer.push']} />
+        <Script async src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`} strategy='worker' data-website-id="4e99a06b-1bd7-4919-b712-82afc8d44a8e"></Script>
       </body>
     </html>
   );

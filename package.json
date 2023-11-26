@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:turebo": "next dev --turbo",
-    "build": "next build",
-    "start": "next start"
+    "build": "yarn partytown && next build",
+    "start": "next start",
+    "partytown": "partytown copylib public/~partytown"
   },
   "dependencies": {
     "@algolia/autocomplete-js": "^1.12.1",
