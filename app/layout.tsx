@@ -37,7 +37,11 @@ export default async function RootLayout({
         {children}
         <Footer />
         <Partytown debug={true} forward={['dataLayer.push']} />
-        <Script async src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`} strategy='worker' data-website-id="4e99a06b-1bd7-4919-b712-82afc8d44a8e"></Script>
+        <Script
+          async
+          src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
+          data-website-id="e8b564dc-9887-4414-b46d-369339dc8f6a"
+        />
       </body>
     </html>
   );

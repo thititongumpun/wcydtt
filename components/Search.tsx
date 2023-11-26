@@ -39,7 +39,6 @@ export default function Search({}: Props) {
             });
           },
           onSelect({ item }) {
-            console.log(item)
             router.push(`/posts/${item.slug}`);
           },
 
