@@ -12,12 +12,12 @@ export default function Footer(): JSX.Element {
         <div className="flex items-center space-x-2">
           <CosmicLogo />
           <span className="text-zinc-700 dark:text-zinc-300">
-            Proudly powered by Cosmic
+            powered by Cosmic
           </span>
         </div>
       </a>
       <div className="text-zinc-700 dark:text-zinc-300">
-        &copy;&nbsp;&nbsp;{new Date().getFullYear()} Cosmic
+        &copy;&nbsp;&nbsp;{new Date().getFullYear()} WCYD
       </div>
     </footer>
   );

@@ -19,6 +19,7 @@ export async function generateMetadata() {
   return {
     title: siteData.metadata.site_title,
     description: siteData.metadata.site_tag,
+    metadataBase: new URL('https://wcydtt.co'),
   };
 }
 

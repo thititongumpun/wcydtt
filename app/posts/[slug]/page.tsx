@@ -18,6 +18,13 @@ export async function generateMetadata({
   const post = await getPost({ params });
   return {
     title: `${post.title} | Simple Next 13 Blog`,
+    alternates: {
+      canonical: `posts/${post.slug}`,
+      languages: {
+        'en-US': `/en-US/posts/${post.slug}`,
+        'de-DE': `/de-DE/posts/${post.slug}`,
+      },
+    },
   };
 }
 
@@ -32,7 +39,7 @@ export default async ({ params }: { params: { slug: string } }) => {
           width={1400}
           height={720}
           className="mb-5 h-[720px] w-full h-auto bg-no-repeat object-cover object-center"
-          src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format`}
+          src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format,compress`}
           priority
           alt={post.title}
           placeholder="blur"

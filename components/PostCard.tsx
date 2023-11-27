@@ -8,11 +8,14 @@ import AuthorAttribution from './AuthorAttribution';
 import AuthorAvatar from './AuthorAvatar';
 import { sanitize } from 'isomorphic-dompurify';
 
-export default function PostCard({ post  }: { post: Post }) {
+export default function PostCard({ post }: { post: Post }) {
   return (
     <div>
       {post.metadata.hero?.imgix_url && (
-        <Link href={`/posts/${post.slug}`} data-umami-event={`click-post-card-${post.slug}`}>
+        <Link
+          href={`/posts/${post.slug}`}
+          data-umami-event={`click-post-card-${post.slug}`}
+        >
           <Image
             width={2800}
             height={400}
@@ -47,9 +50,9 @@ export default function PostCard({ post  }: { post: Post }) {
         }}
       />
       <div className="flex items-center justify-between font-medium text-green-600 dark:text-green-200">
-        <Link href={`/posts/${post.slug}`}>
+        <Link href={`/posts/${post.slug}`} arai-label={`${post.title}`}>
           <div className="flex items-center space-x-2">
-            <span>Read more</span>
+            <span>Read {post.title}</span>
             <ArrowRight className="h-4 w-4 text-inherit" />
           </div>
         </Link>
