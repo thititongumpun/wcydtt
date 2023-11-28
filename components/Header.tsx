@@ -1,8 +1,10 @@
 import React from 'react';
 import SiteLogo from './logos/SiteLogo';
 import { GlobalData } from '../lib/types';
-import Search from './Search';
-import ThemeToggle from './ThemeToggle';
+import dynamic from 'next/dynamic';
+
+const Search = dynamic(() => import('./Search'))
+const ThemeToggle = dynamic(() => import('./ThemeToggle'))
 
 export default function Header({ name }: { name: GlobalData }): JSX.Element {
   return (

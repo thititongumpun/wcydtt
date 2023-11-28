@@ -5,10 +5,13 @@ import Providers from './Providers';
 import { getGlobalData } from '../lib/cosmic';
 import Generator from 'next/font/local';
 // import Banner from '../components/Banner';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import Script from 'next/script';
 import { Partytown } from '@builder.io/partytown/react';
+
+import dynamic from 'next/dynamic';
+
+const Header = dynamic(() => import('../components/Header'))
+const Footer = dynamic(() => import('../components/Footer'))
 
 const sans = Generator({
   src: '../fonts/Generator-Variable.ttf',

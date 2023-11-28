@@ -12,21 +12,24 @@ export default function PostCard({ post }: { post: Post }) {
   return (
     <div>
       {post.metadata.hero?.imgix_url && (
-        <Link
-          href={`/posts/${post.slug}`}
-          data-umami-event={`click-post-card-${post.slug}`}
-        >
-          <Image
-            width={2800}
-            height={400}
-            className="mb-5 h-[400px] h-auto w-full rounded-xl bg-no-repeat object-cover object-center transition-transform duration-200 ease-out hover:scale-[1.02]"
-            src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format`}
-            priority
-            alt={post.title}
-            placeholder="blur"
-            blurDataURL={`${post.metadata.hero?.imgix_url}?auto=format,compress&q=1&blur=500&w=2`}
-          />
-        </Link>
+        <div className="mx-auto flex w-full items-center justify-center">
+          <Link
+            href={`/posts/${post.slug}`}
+            data-umami-event={`click-post-card-${post.slug}`}
+          >
+            <Image
+              width={2800}
+              height={400}
+              sizes="100vw"
+              className="mb-5 h-auto max-w-xl rounded-xl bg-no-repeat object-cover object-center transition-transform duration-200 ease-out hover:scale-[1.02]"
+              src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format`}
+              priority
+              alt={post.title}
+              placeholder="blur"
+              blurDataURL={`${post.metadata.hero?.imgix_url}?auto=format,compress&q=1&blur=500&w=2`}
+            />
+          </Link>
+        </div>
       )}
       <h2 className="pb-3 text-xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
         <Link href={`/posts/${post.slug}`}>{post.title}</Link>
@@ -52,7 +55,7 @@ export default function PostCard({ post }: { post: Post }) {
       <div className="flex items-center justify-between font-medium text-green-600 dark:text-green-200">
         <Link href={`/posts/${post.slug}`} arai-label={`${post.title}`}>
           <div className="flex items-center space-x-2">
-            <span>Read {post.title}</span>
+            <span className="text-sm">Read {post.title}</span>
             <ArrowRight className="h-4 w-4 text-inherit" />
           </div>
         </Link>

@@ -35,16 +35,19 @@ export default async ({ params }: { params: { slug: string } }) => {
   return (
     <>
       {post && post.metadata.hero?.imgix_url && (
-        <Image
-          width={1400}
-          height={720}
-          className="mb-5 h-[720px] w-full h-auto bg-no-repeat object-cover object-center"
-          src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format,compress`}
-          priority
-          alt={post.title}
-          placeholder="blur"
-          blurDataURL={`${post.metadata.hero?.imgix_url}?auto=format,compress&q=1&blur=500&w=2`}
-        />
+        <div className="mx-auto flex max-w-7xl items-center justify-center">
+          <Image
+            width={1400}
+            height={720}
+            sizes="100vw"
+            className="mb-5 h-auto max-w-md bg-no-repeat object-cover object-center"
+            src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format,compress`}
+            priority
+            alt={post.title}
+            placeholder="blur"
+            blurDataURL={`${post.metadata.hero?.imgix_url}?auto=format,compress&q=1&blur=500&w=2`}
+          />
+        </div>
       )}
       <main className="mx-auto flex flex-col justify-center">
         <div className="mx-auto flex w-full flex-col items-start justify-center px-4 md:flex-row">

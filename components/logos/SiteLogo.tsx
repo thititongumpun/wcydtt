@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import OBMLogo from './OBMLogo';
 import { GlobalData } from '../../lib/types';
-import Search from '../Search';
-import ThemeToggle from '../ThemeToggle';
 
 export default function SiteLogo({
   siteData,
