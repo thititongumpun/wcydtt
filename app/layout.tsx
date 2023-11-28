@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/globals.css';
 import '@algolia/autocomplete-theme-classic';
-import Providers from './providers';
+import Providers from './Providers';
 import { getGlobalData } from '../lib/cosmic';
 import Generator from 'next/font/local';
 // import Banner from '../components/Banner';
@@ -38,7 +38,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       {/* <html lang="en" className={`${sans.variable} font-sans`}> */}
-      <body className="dark:bg-black bg-white">
+      <body className="bg-white dark:bg-black">
         <Providers>
           {/* <Banner /> */}
           <Header name={siteData} />
