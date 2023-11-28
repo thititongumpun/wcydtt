@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/globals.css';
 import '@algolia/autocomplete-theme-classic';
+import Providers from './providers';
 import { getGlobalData } from '../lib/cosmic';
 import Generator from 'next/font/local';
 // import Banner from '../components/Banner';
@@ -31,12 +32,19 @@ export default async function RootLayout({
   const siteData = await getGlobalData();
 
   return (
-    <html lang="en" className={`${sans.variable} font-sans`}>
-      <body className="bg-white dark:bg-zinc-950">
-        {/* <Banner /> */}
-        <Header name={siteData} />
-        {children}
-        <Footer />
+    <html
+      lang="en"
+      className={`${sans.variable} font-sans`}
+      suppressHydrationWarning
+    >
+      {/* <html lang="en" className={`${sans.variable} font-sans`}> */}
+      <body className="dark:bg-black bg-white">
+        <Providers>
+          {/* <Banner /> */}
+          <Header name={siteData} />
+          {children}
+          <Footer />
+        </Providers>
         <Partytown debug={true} forward={['dataLayer.push']} />
         <Script
           async

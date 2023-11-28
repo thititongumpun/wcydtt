@@ -18,6 +18,7 @@ export default function Search({}: Props) {
   const router = useRouter();
   return (
     <Autocomplete
+      placeholder="Search posts"
       classNames={{
         list: '',
         item: '',

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import OBMLogo from './OBMLogo';
 import { GlobalData } from '../../lib/types';
 import Search from '../Search';
+import ThemeToggle from '../ThemeToggle';
 
 export default function SiteLogo({
   siteData,
@@ -19,8 +20,6 @@ export default function SiteLogo({
           {siteData.metadata.site_title}
         </Link>
       </h1>
-      {/* Search */}
-      <Search />
       <span className="relative hidden text-lg tracking-wide text-zinc-500 dark:text-zinc-200 md:flex">
         {siteData.metadata.site_tag}
       </span>
