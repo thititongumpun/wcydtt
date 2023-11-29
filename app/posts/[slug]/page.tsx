@@ -35,7 +35,7 @@ export default async ({ params }: { params: { slug: string } }) => {
   return (
     <>
       {post && post.metadata.hero?.imgix_url && (
-        <div className="mx-auto flex max-w-7xl items-center justify-center">
+        <div className="mx-auto flex w-full items-center justify-center">
           <Image
             width={1400}
             height={720}
@@ -80,6 +80,7 @@ export default async ({ params }: { params: { slug: string } }) => {
                 </div>
                 <hr className="w-full border-t border-zinc-300 pb-8 dark:border-zinc-700" />
                 <div
+                  className="break-word md:text-md overflow-x-auto whitespace-pre-line text-sm"
                   dangerouslySetInnerHTML={{
                     __html: sanitize(post.metadata.content) ?? '',
                   }}
