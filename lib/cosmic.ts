@@ -50,6 +50,27 @@ export async function getAllPosts(): Promise<Post[]> {
   return Promise.resolve([]);
 }
 
+export async function getAllPostsPagination(params: { pageIndex: number, limit: number }): Promise<Post[]> {
+  try {
+    // Get all posts with pagination
+    const data: any = await Promise.resolve(
+      cosmic.objects
+        .find({
+          type: 'posts',
+        })
+        .props('id,type,slug,title,metadata,created_at')
+        .depth(1)
+        .skip(params.pageIndex)
+        .limit(params.limit)
+    );
+    const posts: Post[] = await data.objects;
+    return Promise.resolve(posts);
+  } catch (error) {
+    console.log('Oof', error);
+  }
+  return Promise.resolve([]);
+}
+
 export async function getPost({
   params,
 }: {

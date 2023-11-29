@@ -21,7 +21,7 @@ export default function PostCard({ post }: { post: Post }) {
               width={2800}
               height={400}
               sizes="100vw"
-              className="mb-5 h-auto max-w-xl rounded-xl bg-no-repeat object-cover object-center transition-transform duration-200 ease-out hover:scale-[1.02]"
+              className="mb-5 h-auto max-w-sm rounded-xl bg-no-repeat object-cover object-center transition-transform duration-200 ease-out hover:scale-[1.02] md:max-w-xl"
               src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format`}
               priority
               alt={post.title}
