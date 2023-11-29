@@ -9,6 +9,7 @@ import Script from 'next/script';
 import { Partytown } from '@builder.io/partytown/react';
 
 import dynamic from 'next/dynamic';
+import { Metadata } from 'next';
 
 const Header = dynamic(() => import('../components/Header'));
 const Footer = dynamic(() => import('../components/Footer'));
@@ -18,12 +19,42 @@ const sans = Generator({
   variable: '--font-sans',
 });
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const siteData = await getGlobalData();
   return {
     title: siteData.metadata.site_title,
     description: siteData.metadata.site_tag,
     metadataBase: new URL('https://wcydtt.co'),
+    keywords: ['Next.js', 'Blog', 'wcydtt', 'Thiti Tongumpun'],
+    authors: [{ name: 'Thiti', url: 'https://thiti.wcydtt.co' }],
+    robots: {
+      index: false,
+      follow: true,
+      nocache: true,
+      googleBot: {
+        index: true,
+        follow: false,
+        noimageindex: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    openGraph: {
+      title: siteData.metadata.site_title,
+      description: siteData.metadata.site_tag,
+      url: 'https://wcydtt.co',
+      siteName: siteData.metadata.site_title,
+      images: [
+        {
+          url: 'https://www.wcydtt.co/blog.png',
+          width: 192,
+          height: 192,
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
   };
 }
 
