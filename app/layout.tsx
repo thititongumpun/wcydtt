@@ -10,8 +10,8 @@ import { Partytown } from '@builder.io/partytown/react';
 
 import dynamic from 'next/dynamic';
 
-const Header = dynamic(() => import('../components/Header'))
-const Footer = dynamic(() => import('../components/Footer'))
+const Header = dynamic(() => import('../components/Header'));
+const Footer = dynamic(() => import('../components/Footer'));
 
 const sans = Generator({
   src: '../fonts/Generator-Variable.ttf',
@@ -55,6 +55,11 @@ export default async function RootLayout({
           data-website-id="e8b564dc-9887-4414-b46d-369339dc8f6a"
           data-cache="true"
           data-umami-event="click-post-card"
+        />
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${process.env.NEXT_PUBLIC_CA_PUB}`}
+          crossOrigin="anonymous"
         />
       </body>
     </html>
