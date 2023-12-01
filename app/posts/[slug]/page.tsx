@@ -9,12 +9,13 @@ import Tag from '../../../components/Tag';
 import AuthorAvatar from '../../../components/AuthorAvatar';
 import AuthorAttribution from '../../../components/AuthorAttribution';
 import { sanitize } from 'isomorphic-dompurify';
+import { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
-}) {
+}): Promise<Metadata> {
   const post = await getPost({ params });
   return {
     title: `${post.title} | Simple Next 13 Blog`,
@@ -22,7 +23,22 @@ export async function generateMetadata({
       canonical: `posts/${post.slug}`,
       languages: {
         'en-US': `/en-US/posts/${post.slug}`,
-        'de-DE': `/de-DE/posts/${post.slug}`,
+        'th-TH': `/th-TH/posts/${post.slug}`,
+      },
+    },
+    keywords: post.metadata.teaser,
+    description: post.metadata.teaser,
+    robots: {
+      index: true,
+      follow: true,
+      nocache: true,
+      googleBot: {
+        index: true,
+        follow: false,
+        noimageindex: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
       },
     },
   };

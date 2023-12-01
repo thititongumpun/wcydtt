@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords: ['Next.js', 'Blog', 'wcydtt', 'Thiti Tongumpun'],
     authors: [{ name: 'Thiti', url: 'https://thiti.wcydtt.co' }],
     robots: {
-      index: false,
+      index: true,
       follow: true,
       nocache: true,
       googleBot: {
@@ -52,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
           height: 192,
         },
       ],
-      locale: 'en_US',
+      locale: 'en_US,th_TH',
       type: 'website',
     },
   };
