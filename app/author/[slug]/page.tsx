@@ -1,15 +1,38 @@
 import React from 'react';
 import PostCard from '../../../components/PostCard';
 import { getAuthor, getAuthorPosts } from '../../../lib/cosmic';
+import { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
 }: {
   params: { id: string; slug: string };
-}) {
+}): Promise<Metadata> {
   const author = await getAuthor({ params });
   return {
     title: `${author.title} posts | Simple React Blog`,
+    alternates: {
+      canonical: `posts/${author.slug}`,
+      languages: {
+        'en-US': `/en-US/posts/${author.slug}`,
+        'th-TH': `/th-TH/posts/${author.slug}`,
+      },
+    },
+    keywords: author.slug,
+    description: author.slug,
+    robots: {
+      index: true,
+      follow: true,
+      nocache: true,
+      googleBot: {
+        index: true,
+        follow: false,
+        noimageindex: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
   };
 }
 
