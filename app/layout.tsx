@@ -13,6 +13,9 @@ import { Metadata } from 'next';
 
 const Header = dynamic(() => import('../components/Header'));
 const Footer = dynamic(() => import('../components/Footer'));
+const ScrollToTopButton = dynamic(
+  () => import('../components/ScrollToTopButton')
+);
 
 const sans = Generator({
   src: '../fonts/Generator-Variable.ttf',
@@ -78,6 +81,7 @@ export default async function RootLayout({
           <Header name={siteData} />
           {children}
           <Footer />
+          <ScrollToTopButton />
         </Providers>
         <Partytown debug={true} forward={['dataLayer.push']} />
         <Script
