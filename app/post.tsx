@@ -12,7 +12,7 @@ export default async function PostList({
   const pageIndex = parseInt(page as string, 10) || 1;
 
   // Set the number of posts to be displayed per page
-  const POSTS_PER_PAGE = 5;
+  const POSTS_PER_PAGE = 3;
 
   // Define the parameters for fetching posts based on the current page
   const params = {

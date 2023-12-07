@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: siteData.metadata.site_tag,
     metadataBase: new URL('https://wcydtt.co'),
     keywords: ['Next.js', 'Blog', 'wcydtt', 'Thiti Tongumpun'],
-    authors: [{ name: 'Thiti', url: 'https://thiti.wcydtt.co' }],
+    authors: [{ name: 'Thiti Tongumpun', url: 'https://thiti.wcydtt.co' }],
     robots: {
       index: true,
       follow: true,

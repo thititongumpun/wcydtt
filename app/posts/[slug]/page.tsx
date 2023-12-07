@@ -96,7 +96,7 @@ export default async ({ params }: { params: { slug: string } }) => {
                 </div>
                 <hr className="w-full border-t border-zinc-300 pb-8 dark:border-zinc-700" />
                 <div
-                  className="break-word md:text-md overflow-x-auto whitespace-pre-line text-sm"
+                  className="break-word md:text-md overflow-x-auto overscroll-contain whitespace-pre-line text-sm"
                   dangerouslySetInnerHTML={{
                     __html: sanitize(post.metadata.content) ?? '',
                   }}

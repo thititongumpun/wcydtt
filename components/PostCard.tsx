@@ -33,11 +33,11 @@ export default function PostCard({ post }: { post: Post }) {
           </Link>
         </div>
       )}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center md:gap-2">
         <h2 className="text-xl font-semibold tracking-tight text-zinc-800 dark:text-zinc-200">
           <Link href={`/posts/${post.slug}`}>{post.title}</Link>
         </h2>
-        <h4 className="pb-2">{readingTime}</h4>
+        <h4 className="md:text-md pb-2 text-xs">{readingTime}</h4>
       </div>
       <div className="flex flex-col justify-between space-y-4 md:flex-row md:space-y-0">
         <div className="flex items-center space-x-2 text-zinc-500 dark:text-zinc-400 md:space-y-0">
