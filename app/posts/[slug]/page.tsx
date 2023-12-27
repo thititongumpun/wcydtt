@@ -26,7 +26,7 @@ export async function generateMetadata({
         'th-TH': `/th-TH/posts/${post.slug}`,
       },
     },
-    keywords: post.metadata.teaser,
+    keywords: post.metadata.content,
     description: post.metadata.teaser,
     robots: {
       index: true,
