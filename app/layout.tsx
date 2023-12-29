@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/globals.css';
 import '@algolia/autocomplete-theme-classic';
 import Providers from './Providers';
-import { getGlobalData } from '../lib/cosmic';
+import { getAllCategories, getGlobalData } from '../lib/cosmic';
 import Generator from 'next/font/local';
 // import Banner from '../components/Banner';
 import Script from 'next/script';
@@ -10,6 +10,7 @@ import { Partytown } from '@builder.io/partytown/react';
 
 import dynamic from 'next/dynamic';
 import { Metadata } from 'next';
+import CategoryList from '../components/CategoryList';
 
 const Header = dynamic(() => import('../components/Header'));
 const Footer = dynamic(() => import('../components/Footer'));
@@ -67,18 +68,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const siteData = await getGlobalData();
-
+  const categories = await getAllCategories();
   return (
     <html
       lang="en"
       className={`${sans.variable} font-sans`}
       suppressHydrationWarning
     >
-      {/* <html lang="en" className={`${sans.variable} font-sans`}> */}
       <body className="bg-white dark:bg-black">
         <Providers>
           {/* <Banner /> */}
-          <Header name={siteData} />
+          <Header name={siteData} categories={categories} />
+          <CategoryList categories={categories} />
           {children}
           <Footer />
           <ScrollToTopButton />
