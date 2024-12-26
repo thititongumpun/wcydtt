@@ -1,52 +1,36 @@
-# Simple Next.js Blog
-
-![simple-nextjs-blog](https://github.com/cosmicjs/simple-nextjs-blog/assets/1950722/64b6673a-e25b-4124-93ed-bb57a6a35211)
-
-### [View Demo](https://cosmic-nextjs-blog.vercel.app/)
-
-### React + Next.js + Cosmic
-
-This blog uses Next.js to create a React blog. It uses Next.js 13 and the new `app` organization structure which takes advantage of [React Server Components](https://nextjs.org/docs/getting-started/react-essentials#server-components). It connects to the Cosmic API via the [Cosmic JavaScript SDK](https://www.npmjs.com/package/@cosmicjs/sdk).
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-1. Log in to Cosmic and install the [Simple Next.js Blog template](https://www.cosmicjs.com/marketplace/templates/simple-nextjs-blog).
-2. Run the following commands to install the code locally.
+First, run the development server:
 
-```
-git clone https://github.com/cosmicjs/simple-nextjs-blog
-cd simple-nextjs-blog
-```
-
-#### Environment Variables
-
-1. Create an `.env.local` file to gain API access to your Cosmic Bucket. To do this, run:
-
-```
-cp .env.example .env.local
-```
-
-2. Find your API access keys at <em>Bucket Settings &gt; API Access</em> after logging into [your Cosmic dashboard](https://app.cosmicjs.com/login) and add them to the `.env.local` file. It should look something like this:
-
-```
-NEXT_PUBLIC_COSMIC_BUCKET_SLUG=your-bucket-slug
-NEXT_PUBLIC_COSMIC_READ_KEY=your-bucket-read-key
-```
-
-#### Run in development
-
-Install all dependencies and run in development mode.
-
-```
-yarn
+```bash
+npm run dev
+# or
 yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Deploy to Vercel
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-<p>Use the following button to deploy to <a href="https://vercel.com/" rel="noopener noreferrer" target="_blank">Vercel</a>. You will need to add API accesss keys as environment variables. Find these in <em>Bucket Settings &gt; API Access</em>.</p>
-<p>
-<a href="https://vercel.com/import/git?c=1&s=https://github.com/cosmicjs/simple-nextjs-blog&env=NEXT_PUBLIC_COSMIC_BUCKET_SLUG,NEXT_PUBLIC_COSMIC_READ_KEY" rel="noopener noreferrer" target="_blank"><img src="https://cdn.cosmicjs.com/d3f0d5e0-c064-11ea-9a05-6f8a16b0b14c-deploy-to-vercel.svg" style="width: 100px;" class="fr-fic fr-dib fr-fil"></a>
-</p>
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
