@@ -44,7 +44,7 @@ export default function RoutingMachine({
 
     routingControlRef.current = L.Routing.control({
       waypoints: [from, to],
-      routeWhileDragging: true,
+      routeWhileDragging: false,
       router: L.Routing.mapbox(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!, {
         language: "en",
       }),
