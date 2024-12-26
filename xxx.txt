@@ -1,0 +1,8 @@
+routingControlRef.current = L.Routing.control({
+      waypoints: [from, to],
+      routeWhileDragging: true,
+      router: L.Routing.mapbox(process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!, {
+        language: "en",
+      }),
+      show: true,
+    }).addTo(map);

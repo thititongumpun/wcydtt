@@ -4,10 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import MyMarker from "./my-marker";
 import L from "leaflet";
-import { Polyline } from "react-leaflet/Polyline";
 import { Result } from "@/types/EvStation";
-import { Route } from "@/types/Route";
-import { Instructions } from "@/types/Direction";
+import "leaflet-routing-machine";
+import RoutingMachine from "./routing-machine";
 
 type LeafMapProps = {
   lat: number | null;
@@ -16,9 +15,10 @@ type LeafMapProps = {
 
 export default function LeafMap({ lat, lng }: LeafMapProps) {
   const [evStations, setEvStations] = useState<Result[]>([]);
-  const [route, setRoute] = useState<Route | null>(null);
-  const [directions, setDirections] = useState<Instructions>([]);
   const lastFetchPosition = useRef<[number, number] | null>(null);
+  const [selectedStation, setSelectedStation] = useState<
+    [number, number] | null
+  >(null);
 
   const calculateDistance = (
     lat1: number,
@@ -54,43 +54,41 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     []
   );
 
-  const fetchRoute = async (
-    startLat: number,
-    startLng: number,
-    endLat: number,
-    endLng: number
-  ) => {
-    try {
-      const response = await fetch(
-        `https://api.tomtom.com/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?instructionsType=text&language=th-TH&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
-      );
-      const data = await response.json();
+  // const fetchRoute = async (
+  //   startLat: number,
+  //   startLng: number,
+  //   endLat: number,
+  //   endLng: number
+  // ) => {
+  //   try {
+  //     const response = await fetch(
+  //       `https://api.tomtom.com/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?instructionsType=text&language=th-TH&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
+  //     );
+  //     const data = await response.json();
 
-      const points = data.routes[0].legs[0].points.map(
-        (point: { latitude: number; longitude: number }) => [
-          point.latitude,
-          point.longitude,
-        ]
-      );
+  //     const points = data.routes[0].legs[0].points.map(
+  //       (point: { latitude: number; longitude: number }) => [
+  //         point.latitude,
+  //         point.longitude,
+  //       ]
+  //     );
 
-      setRoute({
-        points,
-        summary: {
-          lengthInMeters: data.routes[0].summary.lengthInMeters,
-          travelTimeInSeconds: data.routes[0].summary.travelTimeInSeconds,
-        },
-      });
+  //     setRoute({
+  //       points,
+  //       summary: {
+  //         lengthInMeters: data.routes[0].summary.lengthInMeters,
+  //         travelTimeInSeconds: data.routes[0].summary.travelTimeInSeconds,
+  //       },
+  //     });
 
-      setDirections(data.routes[0].guidance.instructions);
-    } catch (error) {
-      console.error("Error fetching route:", error);
-    }
-  };
+  //     setDirections(data.routes[0].guidance.instructions);
+  //   } catch (error) {
+  //     console.error("Error fetching route:", error);
+  //   }
+  // };
 
   const handleStationClick = (stationLat: number, stationLng: number) => {
-    if (lat && lng) {
-      fetchRoute(lat, lng, stationLat, stationLng);
-    }
+    setSelectedStation([stationLat, stationLng]);
   };
 
   const handlePositionChange = useCallback(
@@ -120,7 +118,7 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     <MapContainer
       center={[lat as number, lng as number]}
       zoom={14}
-      style={{ height: "95vh", width: "100%", position: "relative", zIndex: 0}}
+      style={{ height: "95vh", width: "100%", position: "relative", zIndex: 0 }}
       scrollWheelZoom={true}
     >
       <TileLayer
@@ -159,36 +157,16 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
               >
                 Route to Station
               </button>
-              {route && (
-                <div className="mt-2">
-                  <p className="font-bold">
-                    Distance: {(route.summary.lengthInMeters / 1000).toFixed(1)}{" "}
-                    km
-                    <br />
-                    Time: {Math.round(
-                      route.summary.travelTimeInSeconds / 60
-                    )}{" "}
-                    mins
-                  </p>
-                  {directions && (
-                    <div className="mt-2">
-                      <p className="font-bold">Directions:</p>
-                      <ol className="list-decimal list-inside">
-                        {directions.map((direction, index) => (
-                          <li key={index} className="text-sm mt-1">
-                            {direction.message}
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </Popup>
         </Marker>
       ))}
-      {route && <Polyline positions={route.points} color="blue" weight={3} />}
+      {lat && lng && selectedStation && (
+        <RoutingMachine
+          from={new L.LatLng(lat, lng)}
+          to={new L.LatLng(selectedStation[0], selectedStation[1])}
+        />
+      )}
       <MyMarker lat={lat} lng={lng} onPositionChange={handlePositionChange} />
     </MapContainer>
   );
