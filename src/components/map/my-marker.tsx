@@ -28,9 +28,6 @@ export default function MyMarker({
   useEffect(() => {
     if (prevPos[1] !== lng && prevPos[0] !== lat) {
       setPrevPos([lat, lng]);
-      if (lat && lng) {
-        onPositionChange(lat, lng);
-      }
     }
   }, [lat, lng, prevPos, onPositionChange]);
 

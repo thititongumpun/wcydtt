@@ -2,31 +2,31 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import MyMarker from "./my-marker";
 import L from "leaflet";
+import RoutingMachine from "./routing-machine";
+import MyMarker from "./my-marker"; // Assuming this is a custom component
 import { Result } from "@/types/EvStation";
 import "leaflet-routing-machine";
-import RoutingMachine from "./routing-machine";
 
-type LeafMapProps = {
+// TypeScript props definition for LeafMap
+interface LeafMapProps {
   lat: number | null;
   lng: number | null;
-};
+}
 
 export default function LeafMap({ lat, lng }: LeafMapProps) {
   const [evStations, setEvStations] = useState<Result[]>([]);
+  const [selectedStation, setSelectedStation] = useState<[number, number] | null>(null);
   const lastFetchPosition = useRef<[number, number] | null>(null);
-  const [selectedStation, setSelectedStation] = useState<
-    [number, number] | null
-  >(null);
 
+  // Haversine formula for calculating distance between two points
   const calculateDistance = (
     lat1: number,
     lon1: number,
     lat2: number,
     lon2: number
-  ) => {
-    const R = 6371;
+  ): number => {
+    const R = 6371; // Earth's radius in km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -38,55 +38,21 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
 
-  const fetchStations = useCallback(
-    async (latitude: number, longitude: number) => {
-      try {
-        const response = await fetch(
-          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=5000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
-        );
-        const data = await response.json();
-        setEvStations(data.results);
-        lastFetchPosition.current = [latitude, longitude];
-      } catch (error) {
-        console.error("Error fetching stations:", error);
-      }
-    },
-    []
-  );
+  // Fetch nearby EV stations using TomTom API
+  const fetchStations = useCallback(async (latitude: number, longitude: number) => {
+    try {
+      const response = await fetch(
+        `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=5000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
+      );
+      const data = await response.json();
+      setEvStations(data.results);
+      lastFetchPosition.current = [latitude, longitude];
+    } catch (error) {
+      console.error("Error fetching stations:", error);
+    }
+  }, []);
 
-  // const fetchRoute = async (
-  //   startLat: number,
-  //   startLng: number,
-  //   endLat: number,
-  //   endLng: number
-  // ) => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://api.tomtom.com/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?instructionsType=text&language=th-TH&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
-  //     );
-  //     const data = await response.json();
-
-  //     const points = data.routes[0].legs[0].points.map(
-  //       (point: { latitude: number; longitude: number }) => [
-  //         point.latitude,
-  //         point.longitude,
-  //       ]
-  //     );
-
-  //     setRoute({
-  //       points,
-  //       summary: {
-  //         lengthInMeters: data.routes[0].summary.lengthInMeters,
-  //         travelTimeInSeconds: data.routes[0].summary.travelTimeInSeconds,
-  //       },
-  //     });
-
-  //     setDirections(data.routes[0].guidance.instructions);
-  //   } catch (error) {
-  //     console.error("Error fetching route:", error);
-  //   }
-  // };
-
+  // Handle station click to set route destination
   const handleStationClick = (stationLat: number, stationLng: number) => {
     setSelectedStation([stationLat, stationLng]);
   };
@@ -112,19 +78,22 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     if (lat && lng) {
       handlePositionChange(lat, lng);
     }
-  }, [handlePositionChange, lat, lng]);
+  }, [lat, lng, handlePositionChange]);
 
   return (
     <MapContainer
-      center={[lat as number, lng as number]}
+      center={[lat ?? 0, lng ?? 0]} // Provide a default fallback for center
       zoom={14}
       style={{ height: "95vh", width: "100%", position: "relative", zIndex: 0 }}
       scrollWheelZoom={true}
     >
+      {/* Tile Layer */}
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
+      {/* EV Stations Markers */}
       {evStations.map((station) => (
         <Marker
           key={station.id}
@@ -141,12 +110,8 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
               <h3>{station.poi.name}</h3>
               <p>Categories: {station.poi.categories.join(", ")}</p>
               <p>
-                Connectors:{" "}
-                {station.chargingPark.connectors
-                  .map(
-                    (connector) =>
-                      `${connector.currentType} (${connector.ratedPowerKW}kW)`
-                  )
+                Connectors: {station.chargingPark.connectors
+                  .map((connector) => `${connector.currentType} (${connector.ratedPowerKW}kW)`)
                   .join(", ")}
               </p>
               <button
@@ -161,13 +126,21 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
           </Popup>
         </Marker>
       ))}
+
+      {/* Routing Machine */}
       {lat && lng && selectedStation && (
         <RoutingMachine
           from={new L.LatLng(lat, lng)}
           to={new L.LatLng(selectedStation[0], selectedStation[1])}
         />
       )}
-      <MyMarker lat={lat} lng={lng} onPositionChange={handlePositionChange} />
+
+      {/* MyMarker */}
+      <MyMarker
+        lat={lat}
+        lng={lng}
+        onPositionChange={(newLat: number, newLng: number) => handlePositionChange(newLat, newLng)}
+      />
     </MapContainer>
   );
 }
