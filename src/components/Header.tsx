@@ -122,8 +122,8 @@ const SpaceNavbar: React.FC = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href="/about" className="flex w-full">
-                    About
+                  <Link href="/ev" className="flex w-full">
+                    EV map
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
