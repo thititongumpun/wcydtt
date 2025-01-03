@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
-import RoutingMachine from "./routing-machine";
 import { Result } from "@/types/EvStation";
 import "leaflet-routing-machine";
 import MyMarker from "./my-marker";
@@ -16,28 +15,6 @@ interface LeafMapProps {
 
 export default function LeafMap({ lat, lng }: LeafMapProps) {
   const [evStations, setEvStations] = useState<Result[]>([]);
-  const [selectedStation, setSelectedStation] = useState<
-    [number, number] | null
-  >(null);
-  const lastFetchPosition = useRef<[number, number] | null>(null);
-
-  const calculateDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ) => {
-    const R = 6371;
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  };
 
   // Fetch nearby EV stations using TomTom API
   const fetchStations = useCallback(
@@ -48,7 +25,7 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
         );
         const data = await response.json();
         setEvStations(data.results);
-        lastFetchPosition.current = [latitude, longitude];
+        // lastFetchPosition.current = [latitude, longitude];
       } catch (error) {
         console.error("Error fetching stations:", error);
       }
@@ -56,32 +33,25 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     []
   );
 
-  const handleStationClick = (stationLat: number, stationLng: number) => {
-    setSelectedStation([stationLat, stationLng]);
+  const onHandleStationClick = (latitude: number, longitude: number) => {
+    const geoUrl = `geo:${latitude},${longitude}`;
+    const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+    // Try using the geo URL first, fallback to Google Maps if unsupported
+    if (navigator.userAgent.includes("Mobile")) {
+      // For mobile devices
+      window.location.href = geoUrl;
+    } else {
+      // For desktop browsers
+      window.open(googleMapsUrl, "_blank");
+    }
   };
-
-  const handlePositionChange = useCallback(
-    (newLat: number, newLng: number) => {
-      if (!lastFetchPosition.current) {
-        fetchStations(newLat, newLng);
-        return;
-      }
-
-      const [prevLat, prevLng] = lastFetchPosition.current;
-      const distance = calculateDistance(prevLat, prevLng, newLat, newLng);
-
-      if (distance >= 1) {
-        fetchStations(newLat, newLng);
-      }
-    },
-    [fetchStations]
-  );
 
   useEffect(() => {
     if (lat && lng) {
-      handlePositionChange(lat, lng);
+      fetchStations(lat, lng);
     }
-  }, [handlePositionChange, lat, lng]);
+  }, [fetchStations, lat, lng]);
 
   return (
     <MapContainer
@@ -121,11 +91,16 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
                   )
                   .join(", ")}
               </p>
+              <p>Distance: {station.dist} meters</p>
+              <p>{station.address.freeformAddress}</p>
               <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
                 onClick={() =>
-                  handleStationClick(station.position.lat, station.position.lon)
+                  onHandleStationClick(
+                    station.position.lat,
+                    station.position.lon
+                  )
                 }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
               >
                 Route to Station
               </button>
@@ -135,13 +110,13 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
       ))}
 
       {/* Routing Machine */}
-      {lat && lng && selectedStation && (
+      {/* {lat && lng && selectedStation && (
         <RoutingMachine
           from={new L.LatLng(lat, lng)}
           to={new L.LatLng(selectedStation[0], selectedStation[1])}
         />
-      )}
-      <MyMarker lat={lat} lng={lng} onPositionChange={handlePositionChange} />
+      )} */}
+      <MyMarker lat={lat} lng={lng} />
     </MapContainer>
   );
 }

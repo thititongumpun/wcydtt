@@ -8,7 +8,7 @@ import { Tooltip } from "react-leaflet";
 type MyMarkerProps = {
   lat: number | null;
   lng: number | null;
-  onPositionChange: (lat: number, lng: number) => void;
+  onPositionChange?: (lat: number, lng: number) => void;
 };
 
 const icon = L.icon({
