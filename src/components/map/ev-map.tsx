@@ -34,13 +34,15 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
   );
 
   const onHandleStationClick = (latitude: number, longitude: number) => {
-    const geoUrl = `geo:${latitude},${longitude}`;
+    // const geoUrl = `geo:${latitude},${longitude}`;
+    const appleMapsUrl = `http://maps.apple.com/?q=${latitude},${longitude}`;
     const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
     // Try using the geo URL first, fallback to Google Maps if unsupported
     if (navigator.userAgent.includes("Mobile")) {
       // For mobile devices
-      window.location.href = geoUrl;
+      // window.location.href = geoUrl;
+      window.location.href = appleMapsUrl;
     } else {
       // For desktop browsers
       window.open(googleMapsUrl, "_blank");
