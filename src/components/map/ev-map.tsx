@@ -21,9 +21,11 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     async (latitude: number, longitude: number) => {
       try {
         const response = await fetch(
-          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=5000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
+          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
         );
         const data = await response.json();
+
+        console.log(data.results);
         setEvStations(data.results);
         // lastFetchPosition.current = [latitude, longitude];
       } catch (error) {
@@ -32,6 +34,30 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     },
     []
   );
+
+  const getIconUrl = (name: string) => {
+    if (name.includes("PluZ")) {
+      return "/pluz.png";
+    } else if (name.includes("SHARGE")) {
+      return "/sharge.png";
+    } else if (name.includes("ON-ION")) {
+      return "/onion.png";
+    } else if (name.includes("EA Anywhere")) {
+      return "/ea-anywhere.png";
+    } else if (name.includes("Charge+")) {
+      return "/chargeplus.png";
+    } else if (name.includes("MEA EV")) {
+      return "/mea-ev.png";
+    } else if (name.includes("Q Charge")) {
+      return "/qcharge.png";
+    } else if (name.includes("Evolt")) {
+      return "/evolt.jpeg";
+    } else if (name.includes("HAUP")) {
+      return "/haup.png";
+    } else {
+      return "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png";
+    }
+  };
 
   const onHandleStationClick = (latitude: number, longitude: number) => {
     // const geoUrl = `geo:${latitude},${longitude}`;
@@ -74,10 +100,11 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
           key={station.id}
           position={[station.position.lat, station.position.lon]}
           icon={L.icon({
-            iconUrl:
-              "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png",
-            iconSize: [45, 45],
-            popupAnchor: [2, -20],
+            iconUrl: getIconUrl(station.poi.name),
+            iconRetinaUrl: getIconUrl(station.poi.name),
+            iconSize: [50, 50],
+            popupAnchor: [0, -25],
+            tooltipAnchor: [0, -20],
           })}
         >
           <Popup>
