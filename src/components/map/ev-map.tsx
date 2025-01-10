@@ -54,6 +54,8 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
       return "/evolt.jpeg";
     } else if (name.includes("HAUP")) {
       return "/haup.png";
+    } else if (name.includes("EleXA")) {
+      return "/elexa.png";
     } else {
       return "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png";
     }
