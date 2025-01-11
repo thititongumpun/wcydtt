@@ -42,7 +42,7 @@ export default function MyMarker({
       previousPosition={prevPos as LatLngExpression}
       duration={1000}
     >
-      <Tooltip direction="top" offset={[0, 0]} opacity={1} permanent>
+      <Tooltip direction="top" offset={[0, 0]} opacity={3} permanent>
         You are here 🐱‍🏍
       </Tooltip>
     </LeafletTrackingMarker>

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import L from "leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import L, { MarkerCluster } from "leaflet";
 import { Result } from "@/types/EvStation";
 import "leaflet-routing-machine";
 import MyMarker from "./my-marker";
@@ -61,6 +62,15 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
     }
   };
 
+  const createClusterCustomIcon = function (cluster: MarkerCluster) {
+    return L.divIcon({
+      html: `<span>${cluster.getChildCount()}</span>`,
+      className:
+        "h-12 w-12 bg-blue-500 flex text-center justify-center items-center font-bold text-lg text-white rounded-full transform -translate-x-1/4 -translate-y-1/4",
+      iconSize: L.point(33, 33, true),
+    });
+  };
+
   const onHandleStationClick = (latitude: number, longitude: number) => {
     // const geoUrl = `geo:${latitude},${longitude}`;
     const appleMapsUrl = `http://maps.apple.com/?q=${latitude},${longitude}`;
@@ -97,48 +107,63 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
       />
 
       {/* EV Stations Markers */}
-      {evStations.map((station) => (
-        <Marker
-          key={station.id}
-          position={[station.position.lat, station.position.lon]}
-          icon={L.icon({
-            iconUrl: getIconUrl(station.poi.name),
-            iconRetinaUrl: getIconUrl(station.poi.name),
-            iconSize: [50, 50],
-            popupAnchor: [0, -25],
-            tooltipAnchor: [0, -20],
-          })}
-        >
-          <Popup>
-            <div>
-              <h3>{station.poi.name}</h3>
-              <p>Categories: {station.poi.categories.join(", ")}</p>
-              <p>
-                Connectors:{" "}
-                {station.chargingPark.connectors
-                  .map(
-                    (connector) =>
-                      `${connector.currentType} (${connector.ratedPowerKW}kW)`
-                  )
-                  .join(", ")}
-              </p>
-              <p>Distance: {station.dist} meters</p>
-              <p>{station.address.freeformAddress}</p>
-              <button
-                onClick={() =>
-                  onHandleStationClick(
-                    station.position.lat,
-                    station.position.lon
-                  )
-                }
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-              >
-                Route to Station
-              </button>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      <MarkerClusterGroup
+        chunkedLoading
+        iconCreateFunction={createClusterCustomIcon}
+        showCoverageOnHover={true}
+        maxClusterRadius={100}
+        spiderfyOnMaxZoom={true}
+        polygonOptions={{
+          fillColor: "#ffffff",
+          color: "#f00800",
+          weight: 5,
+          opacity: 1,
+          fillOpacity: 0.8,
+        }}
+      >
+        {evStations.map((station) => (
+          <Marker
+            key={station.id}
+            position={[station.position.lat, station.position.lon]}
+            icon={L.icon({
+              iconUrl: getIconUrl(station.poi.name),
+              iconRetinaUrl: getIconUrl(station.poi.name),
+              iconSize: [38, 38],
+              popupAnchor: [0, -25],
+              tooltipAnchor: [0, -20],
+            })}
+          >
+            <Popup>
+              <div>
+                <h3>{station.poi.name}</h3>
+                <p>Categories: {station.poi.categories.join(", ")}</p>
+                <p>
+                  Connectors:{" "}
+                  {station.chargingPark.connectors
+                    .map(
+                      (connector) =>
+                        `${connector.currentType} (${connector.ratedPowerKW}kW)`
+                    )
+                    .join(", ")}
+                </p>
+                <p>Distance: {station.dist} meters</p>
+                <p>{station.address.freeformAddress}</p>
+                <button
+                  onClick={() =>
+                    onHandleStationClick(
+                      station.position.lat,
+                      station.position.lon
+                    )
+                  }
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+                >
+                  Route to Station
+                </button>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MarkerClusterGroup>
 
       {/* Routing Machine */}
       {/* {lat && lng && selectedStation && (
