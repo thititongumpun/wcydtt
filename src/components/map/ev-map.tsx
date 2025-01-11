@@ -7,6 +7,7 @@ import L, { MarkerCluster } from "leaflet";
 import { Result } from "@/types/EvStation";
 import "leaflet-routing-machine";
 import MyMarker from "./my-marker";
+import GeolocateControl from "./geolocate-control";
 
 // TypeScript props definition for LeafMap
 interface LeafMapProps {
@@ -172,6 +173,7 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
           to={new L.LatLng(selectedStation[0], selectedStation[1])}
         />
       )} */}
+      <GeolocateControl />
       <MyMarker lat={lat} lng={lng} />
     </MapContainer>
   );

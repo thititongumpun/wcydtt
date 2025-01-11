@@ -783,6 +783,13 @@
   dependencies:
     "@types/leaflet" "*"
 
+"@types/leaflet.locatecontrol@^0.74.6":
+  version "0.74.6"
+  resolved "https://registry.yarnpkg.com/@types/leaflet.locatecontrol/-/leaflet.locatecontrol-0.74.6.tgz#4a69f6f07c46e4937bff1382932f33b1c3cbb774"
+  integrity sha512-IMnp6zSkiEKx5fwZSfySIyQWJWR/tpF00jRZC6BmFU//ygVRChakQpGPMpHIjQOnP3UMTmTXgztvQ2AwlHL8Mg==
+  dependencies:
+    "@types/leaflet" "*"
+
 "@types/leaflet.markercluster@^1.5.5":
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/@types/leaflet.markercluster/-/leaflet.markercluster-1.5.5.tgz#e420caf5b9f6300ab4869fc877d08a9eaf200eec"
@@ -2482,6 +2489,11 @@ leaflet-routing-machine@^3.2.12:
     "@mapbox/corslite" "0.0.7"
     "@mapbox/polyline" "^0.2.0"
     osrm-text-instructions "^0.13.2"
+
+leaflet.locatecontrol@^0.83.1:
+  version "0.83.1"
+  resolved "https://registry.yarnpkg.com/leaflet.locatecontrol/-/leaflet.locatecontrol-0.83.1.tgz#2e6614815d6d255e65d0ed248c7b3ab8bf57a998"
+  integrity sha512-oF5uey4GOpnw/ly379fV8JQJuUQes9eECaWo8voTIWLQERYPCudOgfUzFggUbq+kpCMNz7BxP/MsLbyf77QorA==
 
 leaflet.markercluster@^1.5.3:
   version "1.5.3"
