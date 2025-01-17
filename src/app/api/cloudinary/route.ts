@@ -13,11 +13,18 @@ cloudinary.config({
 export async function GET() {
   try {
     // Get all images from Cloudinary account
-    const result = await cloudinary.api.resources({
-      type: 'upload',
-      prefix: 'wcydtt',
-      max_results: 100
-    });
+    // const result = await cloudinary.api.resources({
+    //   type: 'upload',
+    //   prefix: 'wcydtt',
+    //   max_results: 100
+    // });
+
+    const result = await cloudinary.search
+    .expression('folder:wcydtt AND resource_type:image')
+    .with_field('tags')  // Include tags in the response
+    .sort_by('created_at', 'desc')  // Sort by upload date
+    .max_results(100)
+    .execute();
 
 
     // Return the resources array

@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import Header from "@/components/Header";
+import Header from "@/components/header";
 
 const geistSans = localFont({
   src: "../font/Geist-Regular.ttf",

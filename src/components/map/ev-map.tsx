@@ -58,6 +58,8 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
       return "/haup.png";
     } else if (name.includes("EleXA")) {
       return "/elexa.png";
+    } else if (name.includes("Noodoe EV")) {
+      return "/noodie.png";
     } else {
       return "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png";
     }
@@ -112,7 +114,7 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
         chunkedLoading
         iconCreateFunction={createClusterCustomIcon}
         showCoverageOnHover={true}
-        maxClusterRadius={100}
+        maxClusterRadius={50}
         spiderfyOnMaxZoom={true}
         polygonOptions={{
           fillColor: "#ffffff",

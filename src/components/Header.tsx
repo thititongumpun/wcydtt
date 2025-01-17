@@ -81,14 +81,14 @@ const SpaceNavbar: React.FC = () => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
+                <Link href="/ev" legacyBehavior passHref>
                   <NavigationMenuLink
                     className={cn(
                       navigationMenuTriggerStyle(),
                       "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200"
                     )}
                   >
-                    About
+                    Map Google EV
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
