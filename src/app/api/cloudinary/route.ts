@@ -20,11 +20,19 @@ export async function GET() {
     // });
 
     const result = await cloudinary.search
-    .expression('folder:wcydtt AND resource_type:image')
-    .with_field('tags')  // Include tags in the response
-    .sort_by('created_at', 'desc')  // Sort by upload date
-    .max_results(100)
-    .execute();
+      .expression('folder:wcydtt AND resource_type:image')
+      .with_field('tags')  // Include tags in the response
+      .sort_by('created_at', 'desc')  // Sort by upload date
+      .max_results(100)
+      .execute();
+
+    // let s = "search";
+    // const result = await cloudinary.search
+    //   .expression(`(filename=${search}* OR public_id=${search}*) OR (filename:${search}*) AND folder:wcydtt AND resource_type:image`)
+    //   .with_field('tags')
+    //   .sort_by('created_at', 'desc')
+    //   .max_results(100)
+    //   .execute();
 
 
     // Return the resources array
