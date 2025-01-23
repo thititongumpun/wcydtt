@@ -40,7 +40,7 @@ export default function MyMarker({
       icon={icon}
       position={[lat as number, lng as number]}
       previousPosition={prevPos as LatLngExpression}
-      duration={1000}
+      duration={3000}
     >
       <Tooltip direction="top" offset={[0, 0]} opacity={3} permanent>
         You are here 🐱‍🏍
