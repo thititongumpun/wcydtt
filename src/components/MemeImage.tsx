@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { CldImage } from "next-cloudinary";
 import { ImageCloudinary } from "@/types/Image";
+import Loading from "./Loading";
 
 type MemeImagesProps = {
   images: ImageCloudinary[];
@@ -10,17 +11,27 @@ type MemeImagesProps = {
 
 export default function MemeImage({ images }: MemeImagesProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredImages, setFilteredImages] = useState<ImageCloudinary[]>([]);
+  const [isPending, startTransition] = useTransition();
 
   const getDisplayName = (publicId: string) => {
     // Get the last part after '/'
-    const fullName = publicId.split('/').pop() || '';
+    const fullName = publicId.split("/").pop() || "";
     // Remove the unique ID suffix (after last underscore)
-    return fullName.split('_').slice(0, -1).join('_');
+    return fullName.split("_").slice(0, -1).join("_");
   };
 
-  const filteredImages = images.filter((image) =>
-    image.public_id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredImages = images.filter((image) =>
+  //   image.public_id.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+  useEffect(() => {
+    startTransition(() => {
+      const filtered = images.filter((image) =>
+        image.public_id.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredImages(filtered);
+    });
+  }, [images, searchTerm]);
 
   return (
     <div>
@@ -34,6 +45,7 @@ export default function MemeImage({ images }: MemeImagesProps) {
         />
       </div>
 
+      {isPending && <Loading />}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
         {filteredImages.map((image, index) => (
           <div key={image.public_id} className="relative pb-[100%]">
