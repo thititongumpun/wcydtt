@@ -92,6 +92,18 @@ const SpaceNavbar: React.FC = () => {
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/evgl" legacyBehavior passHref>
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200"
+                    )}
+                  >
+                    EV GL MAP
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
           <div className="flex items-center space-x-4">
@@ -124,6 +136,11 @@ const SpaceNavbar: React.FC = () => {
                 <DropdownMenuItem>
                   <Link href="/ev" className="flex w-full">
                     EV map
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/evgl" className="flex w-full">
+                    EV map GL
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

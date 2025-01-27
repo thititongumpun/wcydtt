@@ -21,9 +21,6 @@ export default function MemeImage({ images }: MemeImagesProps) {
     return fullName.split("_").slice(0, -1).join("_");
   };
 
-  // const filteredImages = images.filter((image) =>
-  //   image.public_id.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
   useEffect(() => {
     startTransition(() => {
       const filtered = images.filter((image) =>
