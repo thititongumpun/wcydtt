@@ -14,6 +14,7 @@ import { useGeolocation } from "@uidotdev/usehooks";
 import Pin from "./pin";
 import { Result } from "@/types/EvStation";
 import ControlPanel from "./control-panel";
+import GeocoderControl from "./geocoder-control";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
@@ -118,14 +119,14 @@ export default function GlMap() {
         position: "relative",
         zIndex: 0,
       }}
-      mapStyle="mapbox://styles/mapbox/streets-v11"
+      mapStyle="mapbox://styles/mapbox/streets-v12"
     >
+      <GeocoderControl mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!} position="top-left" />
       <GeolocateControl position="top-left" />
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
       <ScaleControl />
       <ControlPanel evStations={evStations} onSelectStation={onSelectStation} />
-
       {pins}
 
       {userPosition.latitude && userPosition.longitude && (
