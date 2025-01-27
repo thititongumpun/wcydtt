@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, {
   FullscreenControl,
   GeolocateControl,
+  MapRef,
   Marker,
   NavigationControl,
   Popup,
@@ -12,15 +13,56 @@ import Map, {
 import { useGeolocation } from "@uidotdev/usehooks";
 import Pin from "./pin";
 import { Result } from "@/types/EvStation";
+import ControlPanel from "./control-panel";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
   const [popupInfo, setPopupInfo] = useState<Result>();
+  const mapRef = useRef<MapRef>(null);
+
+  const onSelectStation = useCallback(
+    ({ longitude, latitude }: { longitude: number; latitude: number }) => {
+      mapRef.current?.flyTo({ center: [longitude, latitude], duration: 2000 });
+    },
+    []
+  );
+
+  const [viewport, setViewport] = useState({
+    zoom: 14,
+  });
+
+  // Get geolocation using the hook
   const state = useGeolocation({
     enableHighAccuracy: true,
     maximumAge: 1000,
     timeout: 10000,
   });
+
+  // State for user's marker position
+  const [userPosition, setUserPosition] = useState<{
+    latitude: number | null;
+    longitude: number | null;
+  }>({
+    latitude: null,
+    longitude: null,
+  });
+
+  // Update user position when geolocation changes
+  useEffect(() => {
+    if (state.latitude && state.longitude) {
+      setUserPosition({
+        latitude: state.latitude,
+        longitude: state.longitude,
+      });
+
+      // Optionally update viewport to follow user
+      setViewport((prev) => ({
+        ...prev,
+        latitude: state.latitude,
+        longitude: state.longitude,
+      }));
+    }
+  }, [state.latitude, state.longitude]);
 
   useEffect(() => {
     async function fetchStations() {
@@ -29,7 +71,6 @@ export default function GlMap() {
           `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${state.latitude}&lon=${state.longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
         );
         const data = await response.json();
-
         setEvStations(data.results);
       } catch (error) {
         console.error("Error fetching stations:", error);
@@ -50,8 +91,6 @@ export default function GlMap() {
           latitude={station.position.lat}
           anchor="bottom"
           onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
             setPopupInfo(station);
           }}
@@ -65,53 +104,62 @@ export default function GlMap() {
   if (state.loading) return <div>Loading...</div>;
 
   return (
-    <div>
-      <Map
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-        initialViewState={{
-          longitude: state.longitude as number,
-          latitude: state.latitude as number,
-          zoom: 14,
-        }}
-        style={{ width: "100%", height: "95vh", position: "relative", zIndex: 0 }}
-        mapStyle="mapbox://styles/mapbox/streets-v11"
-      >
-        <GeolocateControl position="top-left" />
-        <FullscreenControl position="top-left" />
-        <NavigationControl position="top-left" />
-        <ScaleControl />
+    <Map
+      ref={mapRef}
+      mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+      initialViewState={{
+        longitude: state.longitude as number,
+        latitude: state.latitude as number,
+        zoom: viewport.zoom,
+      }}
+      style={{
+        width: "100%",
+        height: "95vh",
+        position: "relative",
+        zIndex: 0,
+      }}
+      mapStyle="mapbox://styles/mapbox/streets-v11"
+    >
+      <GeolocateControl position="top-left" />
+      <FullscreenControl position="top-left" />
+      <NavigationControl position="top-left" />
+      <ScaleControl />
+      <ControlPanel evStations={evStations} onSelectStation={onSelectStation} />
 
-        {pins}
+      {pins}
 
-        <Marker 
-          latitude={state.latitude as number}
-          longitude={state.longitude as number}
-        />
+      {userPosition.latitude && userPosition.longitude && (
+        <Marker
+          latitude={userPosition.latitude}
+          longitude={userPosition.longitude}
+        >
+          <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white pulse-animation" />
+        </Marker>
+      )}
 
-        {popupInfo && (
-          <Popup
-            anchor="top"
-            longitude={Number(popupInfo.position.lon)}
-            latitude={Number(popupInfo.position.lat)}
-            onClose={() => setPopupInfo(undefined)}
-          >
-            <div>
-              {popupInfo.poi.name}, {popupInfo.poi.categories.join(", ")}
-              <p>
-                Connectors:{" "}
-                {popupInfo.chargingPark.connectors
-                  .map(
-                    (connector) =>
-                      `${connector.currentType} (${connector.ratedPowerKW}kW)`
-                  )
-                  .join(", ")}
-              </p>
-              <p>Distance: {popupInfo.dist} meters</p>
-              <p>{popupInfo.address.freeformAddress}</p>
-            </div>
-          </Popup>
-        )}
-      </Map>
-    </div>
+      {popupInfo && (
+        <Popup
+          anchor="top"
+          longitude={Number(popupInfo.position.lon)}
+          latitude={Number(popupInfo.position.lat)}
+          onClose={() => setPopupInfo(undefined)}
+        >
+          <div>
+            {popupInfo.poi.name}, {popupInfo.poi.categories.join(", ")}
+            <p>
+              Connectors:{" "}
+              {popupInfo.chargingPark.connectors
+                .map(
+                  (connector) =>
+                    `${connector.currentType} (${connector.ratedPowerKW}kW)`
+                )
+                .join(", ")}
+            </p>
+            <p>Distance: {popupInfo.dist} meters</p>
+            <p>{popupInfo.address.freeformAddress}</p>
+          </div>
+        </Popup>
+      )}
+    </Map>
   );
 }
