@@ -1,4 +1,5 @@
 "use client";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, {
   FullscreenControl,
@@ -24,14 +25,17 @@ export default function GlMap() {
   const mapRef = useRef<MapRef>(null);
 
   const onSelectStation = useCallback(
-    ({ longitude, latitude }: { longitude: number; latitude: number }, index: number) => {
+    (
+      { longitude, latitude }: { longitude: number; latitude: number },
+      index: number
+    ) => {
       // Set the selected index and start pinging
       setSelectedIndex(index);
       setIsPinging(true);
-      
+
       // Fly to the selected location
       mapRef.current?.flyTo({ center: [longitude, latitude], duration: 2000 });
-      
+
       // Reset ping animation after 3 seconds
       setTimeout(() => {
         setIsPinging(false);
@@ -105,13 +109,16 @@ export default function GlMap() {
           onClick={(e) => {
             e.originalEvent.stopPropagation();
             setPopupInfo(station);
-            onSelectStation({
-              longitude: station.position.lon,
-              latitude: station.position.lat
-            }, index);
+            onSelectStation(
+              {
+                longitude: station.position.lon,
+                latitude: station.position.lat,
+              },
+              index
+            );
           }}
         >
-          <Pin 
+          <Pin
             isSelected={selectedIndex === index}
             isPinging={isPinging && selectedIndex === index}
           />
@@ -139,15 +146,18 @@ export default function GlMap() {
       }}
       mapStyle="mapbox://styles/mapbox/streets-v12"
     >
-      <GeocoderControl mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!} position="top-left" />
+      <GeocoderControl
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
+        position="top-left"
+      />
       <GeolocateControl position="top-left" />
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
       <ScaleControl />
-      <ControlPanel 
-        evStations={evStations} 
+      <ControlPanel
+        evStations={evStations}
         onSelectStation={onSelectStation}
-        selectedIndex={selectedIndex} 
+        selectedIndex={selectedIndex}
         isPinging={isPinging}
       />
       {pins}
