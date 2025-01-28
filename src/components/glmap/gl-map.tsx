@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, {
   FullscreenControl,
@@ -11,19 +10,32 @@ import Map, {
   ScaleControl,
 } from "react-map-gl";
 import { useGeolocation } from "@uidotdev/usehooks";
-import Pin from "./pin";
+// import Pin from "./animated-pin";
 import { Result } from "@/types/EvStation";
 import ControlPanel from "./control-panel";
 import GeocoderControl from "./geocoder-control";
+import Pin from "./pin";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
   const [popupInfo, setPopupInfo] = useState<Result>();
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [isPinging, setIsPinging] = useState(false);
   const mapRef = useRef<MapRef>(null);
 
   const onSelectStation = useCallback(
-    ({ longitude, latitude }: { longitude: number; latitude: number }) => {
+    ({ longitude, latitude }: { longitude: number; latitude: number }, index: number) => {
+      // Set the selected index and start pinging
+      setSelectedIndex(index);
+      setIsPinging(true);
+      
+      // Fly to the selected location
       mapRef.current?.flyTo({ center: [longitude, latitude], duration: 2000 });
+      
+      // Reset ping animation after 3 seconds
+      setTimeout(() => {
+        setIsPinging(false);
+      }, 3000);
     },
     []
   );
@@ -56,7 +68,6 @@ export default function GlMap() {
         longitude: state.longitude,
       });
 
-      // Optionally update viewport to follow user
       setViewport((prev) => ({
         ...prev,
         latitude: state.latitude,
@@ -94,12 +105,19 @@ export default function GlMap() {
           onClick={(e) => {
             e.originalEvent.stopPropagation();
             setPopupInfo(station);
+            onSelectStation({
+              longitude: station.position.lon,
+              latitude: station.position.lat
+            }, index);
           }}
         >
-          <Pin />
+          <Pin 
+            isSelected={selectedIndex === index}
+            isPinging={isPinging && selectedIndex === index}
+          />
         </Marker>
       )),
-    [evStations]
+    [evStations, selectedIndex, isPinging, onSelectStation]
   );
 
   if (state.loading) return <div>Loading...</div>;
@@ -126,7 +144,12 @@ export default function GlMap() {
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
       <ScaleControl />
-      <ControlPanel evStations={evStations} onSelectStation={onSelectStation} />
+      <ControlPanel 
+        evStations={evStations} 
+        onSelectStation={onSelectStation}
+        selectedIndex={selectedIndex} 
+        isPinging={isPinging}
+      />
       {pins}
 
       {userPosition.latitude && userPosition.longitude && (
