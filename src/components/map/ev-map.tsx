@@ -60,6 +60,10 @@ export default function LeafMap({ lat, lng }: LeafMapProps) {
       return "/elexa.png";
     } else if (name.includes("Noodoe EV")) {
       return "/noodoe.png";
+    } else if (name.includes("PEA")) {
+      return "/pea.png";
+    } else if (name.includes("GINKA")) {
+      return "/pea.png";
     } else {
       return "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png";
     }

@@ -121,6 +121,7 @@ export default function GlMap() {
           <Pin
             isSelected={selectedIndex === index}
             isPinging={isPinging && selectedIndex === index}
+            providerName={station.poi.name}
           />
         </Marker>
       )),
