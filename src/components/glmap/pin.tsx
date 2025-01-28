@@ -11,7 +11,6 @@ type PinProps = {
 };
 
 const getIconUrl = (name: string) => {
-  console.log(name);
   if (name.includes("PluZ")) {
     return "/pluz.png";
   } else if (name.includes("SHARGE")) {

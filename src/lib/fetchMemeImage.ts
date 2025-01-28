@@ -22,13 +22,15 @@ export async function getMemeImages() {
 
     // Use Promise.all to wait for all image processing to complete
     await Promise.all(
-      result.resources.map(async (image: Resource) => {
+      result.resources.sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime())).map(async (image: Resource) => {
         const cldImageUrl = await getCldImageUrl({
           src: image.public_id,
           width: 960,
           height: 600,
           removeBackground: true,
         });
+
+
 
         try {
           const response = await fetch(cldImageUrl);

@@ -79,7 +79,7 @@ export default function ControlPanel({
                     htmlFor={`station-${index}`}
                     className="flex-1 text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                   >
-                    {station.poi.name}
+                    {station.poi.name} {station.dist.toFixed(2)} km
                   </label>
                 </div>
               ))}
