@@ -43,11 +43,11 @@ const SpaceNavbar: React.FC = () => {
                     <li className="row-span-3">
                       <NavigationMenuLink asChild>
                         <Link
-                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-purple-500 to-purple-900 p-6 no-underline outline-none focus:shadow-md"
+                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-purple-500 to-purple-900 p-6 text-white no-underline outline-none focus:shadow-md"
                           href="/"
                         >
-                          <Star className="h-6 w-6 text-white" />
-                          <div className="mt-4 mb-2 text-lg font-medium text-white">
+                          <Star className="h-6 w-6" />
+                          <div className="mb-2 mt-4 text-lg font-medium">
                             Celestial Bodies
                           </div>
                           <p className="text-sm leading-tight text-purple-100">
@@ -56,7 +56,7 @@ const SpaceNavbar: React.FC = () => {
                         </Link>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/planets" title="Planets">
+                    <ListItem href="/memes" title="Meme">
                       Discover the planets in our solar system
                     </ListItem>
                     <ListItem href="/stars" title="Stars">
@@ -73,7 +73,7 @@ const SpaceNavbar: React.FC = () => {
                   <NavigationMenuLink
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200"
+                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200",
                     )}
                   >
                     EV Map
@@ -85,7 +85,7 @@ const SpaceNavbar: React.FC = () => {
                   <NavigationMenuLink
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200"
+                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200",
                     )}
                   >
                     Map Google EV
@@ -97,7 +97,7 @@ const SpaceNavbar: React.FC = () => {
                   <NavigationMenuLink
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200"
+                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200",
                     )}
                   >
                     EV GL MAP
@@ -113,7 +113,7 @@ const SpaceNavbar: React.FC = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="md:hidden text-white hover:bg-purple-800 hover:text-purple-200"
+                  className="text-white hover:bg-purple-800 hover:text-purple-200 md:hidden"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
@@ -121,7 +121,7 @@ const SpaceNavbar: React.FC = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="w-[200px] bg-slate-900 text-white"
+                className="w-[200px] bg-slate-900"
               >
                 <DropdownMenuItem>
                   <Link href="/" className="flex w-full">
@@ -163,13 +163,11 @@ const ListItem = React.forwardRef<
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-purple-800 hover:text-purple-200",
-            className
+            className,
           )}
           {...props}
         >
-          <div className="text-sm font-medium leading-none text-white">
-            {title}
-          </div>
+          <div className="text-sm font-medium leading-none">{title}</div>
           <p className="line-clamp-2 text-sm leading-snug text-purple-300">
             {children}
           </p>
