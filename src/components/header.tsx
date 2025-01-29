@@ -119,10 +119,7 @@ const SpaceNavbar: React.FC = () => {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[200px] bg-slate-900"
-              >
+              <DropdownMenuContent align="end" className="w-[200px]">
                 <DropdownMenuItem>
                   <Link href="/" className="flex w-full">
                     Meme

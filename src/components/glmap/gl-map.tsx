@@ -52,7 +52,7 @@ export default function GlMap() {
   // Get geolocation using the hook
   const state = useGeolocation({
     enableHighAccuracy: true,
-    maximumAge: 1000,
+    maximumAge: 0,
     timeout: 10000,
   });
 
