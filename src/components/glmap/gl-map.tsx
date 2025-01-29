@@ -16,6 +16,7 @@ import { Result } from "@/types/EvStation";
 import ControlPanel from "./control-panel";
 import GeocoderControl from "./geocoder-control";
 import Pin from "./pin";
+import UserLocationMarker from "./user-location-marker";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
@@ -27,7 +28,7 @@ export default function GlMap() {
   const onSelectStation = useCallback(
     (
       { longitude, latitude }: { longitude: number; latitude: number },
-      index: number
+      index: number,
     ) => {
       // Set the selected index and start pinging
       setSelectedIndex(index);
@@ -41,7 +42,7 @@ export default function GlMap() {
         setIsPinging(false);
       }, 3000);
     },
-    []
+    [],
   );
 
   const [viewport, setViewport] = useState({
@@ -84,7 +85,7 @@ export default function GlMap() {
     async function fetchStations() {
       try {
         const response = await fetch(
-          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${state.latitude}&lon=${state.longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`
+          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${state.latitude}&lon=${state.longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`,
         );
         const data = await response.json();
         setEvStations(data.results);
@@ -114,7 +115,7 @@ export default function GlMap() {
                 longitude: station.position.lon,
                 latitude: station.position.lat,
               },
-              index
+              index,
             );
           }}
         >
@@ -125,7 +126,7 @@ export default function GlMap() {
           />
         </Marker>
       )),
-    [evStations, selectedIndex, isPinging, onSelectStation]
+    [evStations, selectedIndex, isPinging, onSelectStation],
   );
 
   if (state.loading) return <div>Loading...</div>;
@@ -164,12 +165,7 @@ export default function GlMap() {
       {pins}
 
       {userPosition.latitude && userPosition.longitude && (
-        <Marker
-          latitude={userPosition.latitude}
-          longitude={userPosition.longitude}
-        >
-          <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white pulse-animation" />
-        </Marker>
+        <UserLocationMarker latitude={userPosition.latitude} longitude={userPosition.longitude}/>
       )}
 
       {popupInfo && (
@@ -186,7 +182,7 @@ export default function GlMap() {
               {popupInfo.chargingPark.connectors
                 .map(
                   (connector) =>
-                    `${connector.currentType} (${connector.ratedPowerKW}kW)`
+                    `${connector.currentType} (${connector.ratedPowerKW}kW)`,
                 )
                 .join(", ")}
             </p>
