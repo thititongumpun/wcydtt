@@ -147,26 +147,6 @@ const SpaceNavbar: React.FC = () => {
                     <span className="flex w-full">{item.label}</span>
                   </DropdownMenuItem>
                 ))}
-                {/* <DropdownMenuItem onSelect={handleCloseClick()}>
-                  <Link href="/" className="flex w-full">
-                    Meme
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleCloseClick()}>
-                  <Link href="/evmap" className="flex w-full">
-                    EV map
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleCloseClick()}>
-                  <Link href="/ev" className="flex w-full">
-                    EV map
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleCloseClick()}>
-                  <Link href="/evgl" className="flex w-full">
-                    EV map GL
-                  </Link>
-                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

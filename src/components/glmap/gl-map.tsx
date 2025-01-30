@@ -166,7 +166,6 @@ export default function GlMap() {
         position: "relative",
         zIndex: 0,
       }}
-      // mapStyle="mapbox://styles/mapbox/streets-v12"
       mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
     >
       <GeocoderControl
@@ -206,6 +205,7 @@ export default function GlMap() {
           longitude={Number(popupInfo.position.lon)}
           latitude={Number(popupInfo.position.lat)}
           onClose={() => setPopupInfo(undefined)}
+          className="text-blue-500"
         >
           <div>
             {popupInfo.poi.name}, {popupInfo.poi.categories.join(", ")}

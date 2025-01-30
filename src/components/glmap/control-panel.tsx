@@ -65,17 +65,6 @@ export default function ControlPanel({
             <RadioGroup
               value={selectedIndex?.toString()}
               onValueChange={handleStationSelect}
-              // onValueChange={(value) => {
-              //   const index = parseInt(value);
-              //   const station = evStations[index];
-              //   onSelectStation(
-              //     {
-              //       longitude: station.position.lon,
-              //       latitude: station.position.lat,
-              //     },
-              //     index,
-              //   );
-              // }}
             >
               {evStations.map((station, index) => (
                 <div

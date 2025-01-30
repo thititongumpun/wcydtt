@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Image
- from "next/image";
+import Image from "next/image";
 type PinProps = {
   size?: number;
   isSelected?: boolean;
@@ -37,6 +36,8 @@ const getIconUrl = (name: string) => {
     return "/noodoe.png";
   } else if (name.includes("GINKA")) {
     return "/ginka.png";
+  } else if (name.includes("OneCharge")) {
+    return "/onecharge.jpeg";
   } else {
     return "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png";
   }
@@ -55,7 +56,7 @@ function Pin({ size = 32, isSelected, isPinging, providerName }: PinProps) {
           height: iconSize,
         }}
       >
-        <div className="relative w-full h-full">
+        <div className="relative h-full w-full">
           <Image
             src={getIconUrl(providerName)}
             alt={`${providerName} charging station`}
@@ -63,7 +64,7 @@ function Pin({ size = 32, isSelected, isPinging, providerName }: PinProps) {
             sizes="(max-width: 48px) 100vw"
             priority
             className={`object-contain drop-shadow-md transition-all duration-300 ${
-              isSelected ? "filter brightness-110" : ""
+              isSelected ? "brightness-110 filter" : ""
             }`}
           />
         </div>
@@ -73,7 +74,7 @@ function Pin({ size = 32, isSelected, isPinging, providerName }: PinProps) {
       {isPinging && (
         <>
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full"
             style={{
               width: size * 2,
               height: size * 2,
@@ -81,7 +82,7 @@ function Pin({ size = 32, isSelected, isPinging, providerName }: PinProps) {
             }}
           />
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full animate-pulse"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full"
             style={{
               width: size * 1.5,
               height: size * 1.5,
