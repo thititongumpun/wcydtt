@@ -18,13 +18,32 @@ import GeocoderControl from "./geocoder-control";
 import Pin from "./pin";
 import UserLocationMarker from "./user-location-marker";
 import Loading from "../Loading";
+import StyleSwitcher from "./style-switcher";
+import { useTheme } from "next-themes";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
   const [popupInfo, setPopupInfo] = useState<Result>();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isPinging, setIsPinging] = useState(false);
+  const { theme, setTheme } = useTheme();
+  // Define map style based on theme
+  const getMapStyle = (currentTheme: string | undefined) => {
+    return currentTheme === "dark" ? "navigation-night-v1" : "streets-v12";
+  };
+
+  const [mapStyle, setMapStyle] = useState(getMapStyle(theme));
   const mapRef = useRef<MapRef>(null);
+
+  // Update map style when theme changes
+  useEffect(() => {
+    setMapStyle(getMapStyle(theme));
+  }, [theme]);
+
+  const handleStyleChange = () => {
+    // Toggle theme between light and dark
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   const onSelectStation = useCallback(
     (
@@ -147,7 +166,8 @@ export default function GlMap() {
         position: "relative",
         zIndex: 0,
       }}
-      mapStyle="mapbox://styles/mapbox/streets-v12"
+      // mapStyle="mapbox://styles/mapbox/streets-v12"
+      mapStyle={`mapbox://styles/mapbox/${mapStyle}`}
     >
       <GeocoderControl
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
@@ -163,6 +183,8 @@ export default function GlMap() {
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
       <ScaleControl position="top-left" />
+      {/* Add the style switcher */}
+      <StyleSwitcher onStyleChange={handleStyleChange} />
       <ControlPanel
         evStations={evStations}
         onSelectStation={onSelectStation}

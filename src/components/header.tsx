@@ -35,8 +35,6 @@ const SpaceNavbar: React.FC = () => {
     { href: "/evgl", label: "EV map GL" },
   ];
 
-  console.log(openDropdownMenu);
-
   const handleCloseClick = (href: string) => {
     setOpenDropdownMenu(false);
     router.push(href);
