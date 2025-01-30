@@ -24,6 +24,7 @@ import { useTheme } from "next-themes";
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
   const [popupInfo, setPopupInfo] = useState<Result>();
+  const [userHeading, setUserHeading] = useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isPinging, setIsPinging] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -80,18 +81,21 @@ export default function GlMap() {
   const [userPosition, setUserPosition] = useState<{
     latitude: number | null;
     longitude: number | null;
+    heading: number | null;
   }>({
     latitude: null,
     longitude: null,
+    heading: null
   });
 
   // Update user position when geolocation changes
   useEffect(() => {
     if (state.latitude && state.longitude) {
-      setUserPosition({
+      setUserPosition(prev => ({
+        ...prev,
         latitude: state.latitude,
         longitude: state.longitude,
-      });
+      }));
 
       setViewport((prev) => ({
         ...prev,
@@ -100,6 +104,16 @@ export default function GlMap() {
       }));
     }
   }, [state.latitude, state.longitude]);
+
+  // Handle geolocate events
+  const handleGeolocate = useCallback((event: GeolocationPosition) => {
+    const heading = event.coords.heading;
+    setUserHeading(heading);
+    setUserPosition(prev => ({
+      ...prev,
+      heading: heading
+    }));
+  }, []);
 
   useEffect(() => {
     async function fetchStations() {
@@ -178,6 +192,7 @@ export default function GlMap() {
         showUserHeading
         showUserLocation
         showAccuracyCircle={false}
+        onGeolocate={handleGeolocate}
       />
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
@@ -196,6 +211,7 @@ export default function GlMap() {
         <UserLocationMarker
           latitude={userPosition.latitude}
           longitude={userPosition.longitude}
+          heading={userHeading}
         />
       )}
 
