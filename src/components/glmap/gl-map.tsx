@@ -85,13 +85,13 @@ export default function GlMap() {
   }>({
     latitude: null,
     longitude: null,
-    heading: null
+    heading: null,
   });
 
   // Update user position when geolocation changes
   useEffect(() => {
     if (state.latitude && state.longitude) {
-      setUserPosition(prev => ({
+      setUserPosition((prev) => ({
         ...prev,
         latitude: state.latitude,
         longitude: state.longitude,
@@ -109,9 +109,9 @@ export default function GlMap() {
   const handleGeolocate = useCallback((event: GeolocationPosition) => {
     const heading = event.coords.heading;
     setUserHeading(heading);
-    setUserPosition(prev => ({
+    setUserPosition((prev) => ({
       ...prev,
-      heading: heading
+      heading: heading,
     }));
   }, []);
 
@@ -215,7 +215,7 @@ export default function GlMap() {
         />
       )}
 
-      {popupInfo && (
+      {/* {popupInfo && (
         <Popup
           anchor="top"
           longitude={Number(popupInfo.position.lon)}
@@ -236,6 +236,71 @@ export default function GlMap() {
             </p>
             <p>Distance: {popupInfo.dist} meters</p>
             <p>{popupInfo.address.freeformAddress}</p>
+          </div>
+        </Popup>
+      )} */}
+      {popupInfo && (
+        <Popup
+          anchor="top"
+          longitude={Number(popupInfo.position.lon)}
+          latitude={Number(popupInfo.position.lat)}
+          onClose={() => setPopupInfo(undefined)}
+          className="text-blue-500"
+        >
+          <div className="max-w-sm p-2">
+            {/* Station Name and Categories */}
+            <div className="mb-3">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {popupInfo.poi.name}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {popupInfo.poi.categories.join(", ")}
+              </p>
+            </div>
+
+            {/* Connectors */}
+            <div className="mb-3">
+              <h4 className="mb-1 font-medium text-gray-700">
+                Available Connectors:
+              </h4>
+              <div className="grid gap-1">
+                {popupInfo.chargingPark.connectors.map((connector, index) => (
+                  <div
+                    key={index}
+                    className="rounded bg-blue-50 px-2 py-1 text-sm text-blue-700"
+                  >
+                    {connector.currentType} ({connector.ratedPowerKW}kW)
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Distance and Address */}
+            <div className="mb-3">
+              <p className="mb-1 text-sm text-gray-600">
+                <span className="font-medium">Distance:</span>{" "}
+                {(popupInfo.dist / 1000).toFixed(2)} km
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Address:</span>{" "}
+                {popupInfo.address.freeformAddress}
+              </p>
+            </div>
+
+            {/* Google Maps Button */}
+            <button
+              onClick={() => {
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${popupInfo.position.lat},${popupInfo.position.lon}`;
+                window.open(url, "_blank");
+              }}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-600"
+            >
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.88-2.88 7.19-5 9.88C9.92 16.21 7 11.85 7 9z" />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
+              Navigate with Google Maps
+            </button>
           </div>
         </Popup>
       )}
