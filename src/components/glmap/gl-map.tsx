@@ -17,6 +17,7 @@ import ControlPanel from "./control-panel";
 import GeocoderControl from "./geocoder-control";
 import Pin from "./pin";
 import UserLocationMarker from "./user-location-marker";
+import Loading from "../Loading";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
@@ -129,7 +130,7 @@ export default function GlMap() {
     [evStations, selectedIndex, isPinging, onSelectStation],
   );
 
-  if (state.loading) return <div>Loading...</div>;
+  if (state.loading) return <Loading />;
 
   return (
     <Map
@@ -152,10 +153,16 @@ export default function GlMap() {
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!}
         position="top-left"
       />
-      <GeolocateControl position="top-left" />
+      <GeolocateControl
+        position="top-left"
+        trackUserLocation
+        showUserHeading
+        showUserLocation
+        showAccuracyCircle={false}
+      />
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
-      <ScaleControl />
+      <ScaleControl position="top-left" />
       <ControlPanel
         evStations={evStations}
         onSelectStation={onSelectStation}
@@ -165,7 +172,10 @@ export default function GlMap() {
       {pins}
 
       {userPosition.latitude && userPosition.longitude && (
-        <UserLocationMarker latitude={userPosition.latitude} longitude={userPosition.longitude}/>
+        <UserLocationMarker
+          latitude={userPosition.latitude}
+          longitude={userPosition.longitude}
+        />
       )}
 
       {popupInfo && (

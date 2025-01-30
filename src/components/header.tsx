@@ -22,8 +22,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "./mode-toggle";
+import { useRouter } from "next/navigation";
 
 const SpaceNavbar: React.FC = () => {
+  const [openDropdownMenu, setOpenDropdownMenu] = React.useState(false);
+  const router = useRouter();
+
+  const menuItems = [
+    { href: "/", label: "Meme" },
+    { href: "/evmap", label: "EV map" },
+    { href: "/ev", label: "EV map" },
+    { href: "/evgl", label: "EV map GL" },
+  ];
+
+  console.log(openDropdownMenu);
+
+  const handleCloseClick = (href: string) => {
+    setOpenDropdownMenu(false);
+    router.push(href);
+  };
   return (
     <div className="w-full bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900">
       <div className="container mx-auto px-4">
@@ -108,7 +125,10 @@ const SpaceNavbar: React.FC = () => {
           </NavigationMenu>
           <div className="flex items-center space-x-4">
             <ModeToggle />
-            <DropdownMenu>
+            <DropdownMenu
+              open={openDropdownMenu}
+              onOpenChange={setOpenDropdownMenu}
+            >
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -120,26 +140,35 @@ const SpaceNavbar: React.FC = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem>
+                {menuItems.map((item, index) => (
+                  <DropdownMenuItem
+                    key={index}
+                    onSelect={() => handleCloseClick(item.href)}
+                    className="cursor-pointer"
+                  >
+                    <span className="flex w-full">{item.label}</span>
+                  </DropdownMenuItem>
+                ))}
+                {/* <DropdownMenuItem onSelect={handleCloseClick()}>
                   <Link href="/" className="flex w-full">
                     Meme
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleCloseClick()}>
                   <Link href="/evmap" className="flex w-full">
                     EV map
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleCloseClick()}>
                   <Link href="/ev" className="flex w-full">
                     EV map
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleCloseClick()}>
                   <Link href="/evgl" className="flex w-full">
                     EV map GL
                   </Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

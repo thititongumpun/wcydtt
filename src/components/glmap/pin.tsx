@@ -13,7 +13,7 @@ type PinProps = {
 const getIconUrl = (name: string) => {
   if (name.includes("PluZ")) {
     return "/pluz.png";
-  } else if (name.includes("SHARGE")) {
+  } else if (name.includes("Sharge")) {
     return "/sharge.png";
   } else if (name.includes("ON-ION")) {
     return "/onion.png";

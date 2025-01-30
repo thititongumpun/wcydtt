@@ -13,7 +13,7 @@ type ControlPanelProps = {
   evStations: Result[];
   onSelectStation: (
     station: { longitude: number; latitude: number },
-    index: number
+    index: number,
   ) => void;
   selectedIndex: number | null;
   isPinging: boolean;
@@ -27,13 +27,30 @@ export default function ControlPanel({
 }: ControlPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleStationSelect = (value: string) => {
+    const index = parseInt(value);
+    const station = evStations[index];
+
+    // Call the selection handler
+    onSelectStation(
+      {
+        longitude: station.position.lon,
+        latitude: station.position.lat,
+      },
+      index,
+    );
+
+    // Close the sheet
+    setIsOpen(false);
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button
           variant="outline"
           size="icon"
-          className="absolute top-4 right-4 z-20"
+          className="absolute right-4 top-4 z-20"
         >
           <Menu
             className={`h-6 w-6 transition-transform duration-300 ${
@@ -42,27 +59,28 @@ export default function ControlPanel({
           />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[400px] sm:w-[540px] p-0">
-        <Card className="h-full border-0 rounded-none">
+      <SheetContent className="w-[400px] p-0 sm:w-[540px]">
+        <Card className="h-full rounded-none border-0">
           <ScrollArea className="h-full p-6">
             <RadioGroup
               value={selectedIndex?.toString()}
-              onValueChange={(value) => {
-                const index = parseInt(value);
-                const station = evStations[index];
-                onSelectStation(
-                  {
-                    longitude: station.position.lon,
-                    latitude: station.position.lat,
-                  },
-                  index
-                );
-              }}
+              onValueChange={handleStationSelect}
+              // onValueChange={(value) => {
+              //   const index = parseInt(value);
+              //   const station = evStations[index];
+              //   onSelectStation(
+              //     {
+              //       longitude: station.position.lon,
+              //       latitude: station.position.lat,
+              //     },
+              //     index,
+              //   );
+              // }}
             >
               {evStations.map((station, index) => (
                 <div
                   key={`station-${index}`}
-                  className={`flex items-center space-x-2 p-4 rounded-lg transition-all duration-300 ${
+                  className={`flex items-center space-x-2 rounded-lg p-4 transition-all duration-300 ${
                     selectedIndex === index
                       ? isPinging
                         ? "bg-blue-100/50 shadow-md"
@@ -77,7 +95,7 @@ export default function ControlPanel({
                   />
                   <label
                     htmlFor={`station-${index}`}
-                    className="flex-1 text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    className="flex-1 cursor-pointer text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     {station.poi.name} {station.dist.toFixed(2)} km
                   </label>
