@@ -20,9 +20,11 @@ export async function getMemeImages() {
       max_results: 100,
     });
 
+    const sortedImages = result.resources.sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
+
     // Use Promise.all to wait for all image processing to complete
     await Promise.all(
-      result.resources.sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime())).map(async (image: Resource) => {
+      sortedImages.sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime())).map(async (image: Resource) => {
         const cldImageUrl = await getCldImageUrl({
           src: image.public_id,
           width: 960,

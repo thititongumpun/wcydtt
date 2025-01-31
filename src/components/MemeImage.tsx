@@ -24,7 +24,7 @@ export default function MemeImage({ images }: MemeImagesProps) {
   useEffect(() => {
     startTransition(() => {
       const filtered = images.filter((image) =>
-        image.public_id.toLowerCase().includes(searchTerm.toLowerCase())
+        image.public_id.toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setFilteredImages(filtered);
     });
@@ -36,17 +36,17 @@ export default function MemeImage({ images }: MemeImagesProps) {
         <input
           type="text"
           placeholder="Search images..."
-          className="w-full p-2 border rounded"
+          className="w-full rounded border p-2"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {isPending && <Loading />}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 p-4">
+      <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filteredImages.map((image, index) => (
           <div key={image.public_id} className="relative pb-[100%]">
-            <div className="absolute inset-0 bg-gray-100 rounded-lg overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden rounded-lg bg-gray-100">
               <CldImage
                 width="400"
                 height="400"
@@ -57,12 +57,12 @@ export default function MemeImage({ images }: MemeImagesProps) {
                         (max-width: 1280px) 25vw,
                         20vw"
                 alt={`Image ${index + 1}`}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
                 placeholder="blur"
                 blurDataURL={image.blur_url}
                 priority
               />
-              <p className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 text-sm truncate">
+              <p className="absolute bottom-0 left-0 right-0 truncate bg-black/50 p-2 text-sm text-white">
                 {getDisplayName(image.public_id)}
               </p>
             </div>
