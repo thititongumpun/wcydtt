@@ -32,7 +32,6 @@ const SpaceNavbar: React.FC = () => {
     { href: "/", label: "Meme" },
     { href: "/evmap", label: "EV map" },
     { href: "/ev", label: "EV map" },
-    { href: "/evgl", label: "EV map GL" },
   ];
 
   const handleCloseClick = (href: string) => {
@@ -104,18 +103,6 @@ const SpaceNavbar: React.FC = () => {
                     )}
                   >
                     Map Google EV
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/evgl" legacyBehavior passHref>
-                  <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent text-white hover:bg-purple-800 hover:text-purple-200",
-                    )}
-                  >
-                    EV GL MAP
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
