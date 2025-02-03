@@ -18,8 +18,10 @@ const getIconUrl = (name: string) => {
     return "/onion.png";
   } else if (name.includes("Altervim")) {
     return "/altervim.jpeg";
-  }  else if (name.includes("EA Anywhere")) {
+  } else if (name.includes("EA Anywhere")) {
     return "/ea-anywhere.png";
+  } else if (name.includes("MG")) {
+    return "/mg.png";
   } else if (name.includes("Charge+")) {
     return "/chargeplus.png";
   } else if (name.includes("MEA EV")) {

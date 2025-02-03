@@ -33,59 +33,122 @@ export default function GlMap() {
   const fetchTimeoutRef = useRef<NodeJS.Timeout>(null);
   const abortControllerRef = useRef<AbortController>(null);
   const isFetchingRef = useRef(false);
+  const lastFetchPosition = useRef<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
-  const fetchEvStations = useCallback(async (latitude: number, longitude: number) => {
-    // Use ref to track fetching state internally
-    if (isFetchingRef.current) {
-      abortControllerRef.current?.abort();
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
+  // Function to calculate distance between two points in kilometers
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ): number => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in km
+    return distance;
+  };
+
+  const fetchEvStations = useCallback(
+    async (latitude: number, longitude: number) => {
+      // Check if this is the first fetch or if we've moved more than 1km
+      if (!lastFetchPosition.current) {
+        lastFetchPosition.current = { latitude, longitude };
+      } else {
+        const distance = calculateDistance(
+          lastFetchPosition.current.latitude,
+          lastFetchPosition.current.longitude,
+          latitude,
+          longitude,
+        );
+
+        // If distance is less than 1km, don't fetch
+        if (distance < 5) {
+          console.log(
+            "Skipping fetch - distance less than 1km:",
+            distance.toFixed(2),
+            "km",
+          );
+          return;
+        }
+
+        // Update last fetch position
+        lastFetchPosition.current = { latitude, longitude };
       }
-      return;
-    }
 
-    try {
-      isFetchingRef.current = true;
-      setIsFetching(true);
-      abortControllerRef.current = new AbortController();
+      if (isFetchingRef.current) {
+        abortControllerRef.current?.abort();
+        if (fetchTimeoutRef.current) {
+          clearTimeout(fetchTimeoutRef.current);
+        }
+        return;
+      }
 
-      fetchTimeoutRef.current = setTimeout(() => {
+      try {
+        isFetchingRef.current = true;
+        setIsFetching(true);
+        abortControllerRef.current = new AbortController();
+
+        fetchTimeoutRef.current = setTimeout(() => {
+          isFetchingRef.current = false;
+          setIsFetching(false);
+        }, 10000);
+
+        const response = await fetch(
+          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`,
+          { signal: abortControllerRef.current.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        setEvStations(data.results);
+        console.log(
+          "Fetched new stations - distance moved:",
+          lastFetchPosition.current
+            ? calculateDistance(
+                lastFetchPosition.current.latitude,
+                lastFetchPosition.current.longitude,
+                latitude,
+                longitude,
+              ).toFixed(2) + " km"
+            : "initial fetch",
+        );
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+          console.log("Fetch aborted");
+        } else {
+          console.error("Error fetching stations:", error);
+        }
+      } finally {
+        if (fetchTimeoutRef.current) {
+          clearTimeout(fetchTimeoutRef.current);
+        }
         isFetchingRef.current = false;
         setIsFetching(false);
-      }, 10000);
-
-      const response = await fetch(
-        `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`,
-        { signal: abortControllerRef.current.signal }
-      );
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
       }
-
-      const data = await response.json();
-      setEvStations(data.results);
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        console.error("Error fetching stations:", error);
-      }
-    } finally {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
-      isFetchingRef.current = false;
-      setIsFetching(false);
-    }
-  }, []); // No dependencies needed now
+    },
+    [],
+  );
 
   const debouncedFetchStations = useMemo(
     () =>
       _.debounce((lat: number, lon: number) => {
         fetchEvStations(lat, lon);
       }, 5000),
-    [fetchEvStations]
+    [fetchEvStations],
   );
 
   useEffect(() => {
@@ -96,6 +159,7 @@ export default function GlMap() {
       }
       debouncedFetchStations.cancel();
       isFetchingRef.current = false;
+      lastFetchPosition.current = null;
     };
   }, [debouncedFetchStations]);
 
@@ -121,7 +185,10 @@ export default function GlMap() {
   };
 
   const onSelectStation = useCallback(
-    ({ longitude, latitude }: { longitude: number; latitude: number }, index: number) => {
+    (
+      { longitude, latitude }: { longitude: number; latitude: number },
+      index: number,
+    ) => {
       setSelectedIndex(index);
       setIsPinging(true);
       mapRef.current?.flyTo({ center: [longitude, latitude], duration: 2000 });
@@ -129,7 +196,7 @@ export default function GlMap() {
         setIsPinging(false);
       }, 3000);
     },
-    []
+    [],
   );
 
   const state = useGeolocation({
@@ -189,7 +256,7 @@ export default function GlMap() {
                 longitude: station.position.lon,
                 latitude: station.position.lat,
               },
-              index
+              index,
             );
           }}
         >
@@ -200,7 +267,7 @@ export default function GlMap() {
           />
         </Marker>
       )),
-    [evStations, selectedIndex, isPinging, onSelectStation]
+    [evStations, selectedIndex, isPinging, onSelectStation],
   );
 
   if (state.loading) return <Loading />;
@@ -239,7 +306,7 @@ export default function GlMap() {
       <NavigationControl position="top-left" />
       <ScaleControl position="top-left" />
       <StyleSwitcher onStyleChange={handleStyleChange} />
-      
+
       {/* Centered loading spinner */}
       {isFetching && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20">
