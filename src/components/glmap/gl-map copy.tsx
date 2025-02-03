@@ -11,6 +11,7 @@ import Map, {
   ScaleControl,
 } from "react-map-gl";
 import { useGeolocation } from "@uidotdev/usehooks";
+// import Pin from "./animated-pin";
 import { Result } from "@/types/EvStation";
 import ControlPanel from "./control-panel";
 import GeocoderControl from "./geocoder-control";
@@ -19,7 +20,6 @@ import UserLocationMarker from "./user-location-marker";
 import Loading from "../Loading";
 import StyleSwitcher from "./style-switcher";
 import { useTheme } from "next-themes";
-import _ from "lodash";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
@@ -28,116 +28,56 @@ export default function GlMap() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isPinging, setIsPinging] = useState(false);
   const { theme, setTheme } = useTheme();
-  const mapRef = useRef<MapRef>(null);
-  const [isFetching, setIsFetching] = useState(false);
-  const fetchTimeoutRef = useRef<NodeJS.Timeout>(null);
-  const abortControllerRef = useRef<AbortController>(null);
-  const isFetchingRef = useRef(false);
-
-  const fetchEvStations = useCallback(async (latitude: number, longitude: number) => {
-    // Use ref to track fetching state internally
-    if (isFetchingRef.current) {
-      abortControllerRef.current?.abort();
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
-      return;
-    }
-
-    try {
-      isFetchingRef.current = true;
-      setIsFetching(true);
-      abortControllerRef.current = new AbortController();
-
-      fetchTimeoutRef.current = setTimeout(() => {
-        isFetchingRef.current = false;
-        setIsFetching(false);
-      }, 10000);
-
-      const response = await fetch(
-        `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${latitude}&lon=${longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`,
-        { signal: abortControllerRef.current.signal }
-      );
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      setEvStations(data.results);
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        console.error("Error fetching stations:", error);
-      }
-    } finally {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
-      isFetchingRef.current = false;
-      setIsFetching(false);
-    }
-  }, []); // No dependencies needed now
-
-  const debouncedFetchStations = useMemo(
-    () =>
-      _.debounce((lat: number, lon: number) => {
-        fetchEvStations(lat, lon);
-      }, 5000),
-    [fetchEvStations]
-  );
-
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current?.abort();
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
-      debouncedFetchStations.cancel();
-      isFetchingRef.current = false;
-    };
-  }, [debouncedFetchStations]);
-
-  const handleMoveEnd = useCallback(() => {
-    if (mapRef.current) {
-      const center = mapRef.current.getCenter();
-      debouncedFetchStations(center.lat, center.lng);
-    }
-  }, [debouncedFetchStations]);
-
+  // Define map style based on theme
   const getMapStyle = (currentTheme: string | undefined) => {
     return currentTheme === "dark" ? "navigation-night-v1" : "streets-v12";
   };
 
   const [mapStyle, setMapStyle] = useState(getMapStyle(theme));
+  const mapRef = useRef<MapRef>(null);
 
+  // Update map style when theme changes
   useEffect(() => {
     setMapStyle(getMapStyle(theme));
   }, [theme]);
 
   const handleStyleChange = () => {
+    // Toggle theme between light and dark
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
   const onSelectStation = useCallback(
-    ({ longitude, latitude }: { longitude: number; latitude: number }, index: number) => {
+    (
+      { longitude, latitude }: { longitude: number; latitude: number },
+      index: number,
+    ) => {
+      // Set the selected index and start pinging
       setSelectedIndex(index);
       setIsPinging(true);
+
+      // Fly to the selected location
       mapRef.current?.flyTo({ center: [longitude, latitude], duration: 2000 });
+
+      // Reset ping animation after 3 seconds
       setTimeout(() => {
         setIsPinging(false);
       }, 3000);
     },
-    []
+    [],
   );
 
+  const [viewport, setViewport] = useState({
+    zoom: 14,
+  });
+
+  // Get geolocation using the hook
   const state = useGeolocation({
     enableHighAccuracy: true,
     maximumAge: 0,
     timeout: 10000,
   });
 
+  // State for user's marker position
   const [userPosition, setUserPosition] = useState<{
     latitude: number | null;
     longitude: number | null;
@@ -148,6 +88,7 @@ export default function GlMap() {
     heading: null,
   });
 
+  // Update user position when geolocation changes
   useEffect(() => {
     if (state.latitude && state.longitude) {
       setUserPosition((prev) => ({
@@ -155,9 +96,16 @@ export default function GlMap() {
         latitude: state.latitude,
         longitude: state.longitude,
       }));
+
+      setViewport((prev) => ({
+        ...prev,
+        latitude: state.latitude,
+        longitude: state.longitude,
+      }));
     }
   }, [state.latitude, state.longitude]);
 
+  // Handle geolocate events
   const handleGeolocate = useCallback((event: GeolocationPosition) => {
     const heading = event.coords.heading;
     setUserHeading(heading);
@@ -168,10 +116,22 @@ export default function GlMap() {
   }, []);
 
   useEffect(() => {
-    if (state.latitude && state.longitude) {
-      fetchEvStations(state.latitude, state.longitude);
+    async function fetchStations() {
+      try {
+        const response = await fetch(
+          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${state.latitude}&lon=${state.longitude}&radius=10000&language=th-TH&categorySet=7309&view=Unified&relatedPois=off&key=${process.env.NEXT_PUBLIC_TOMTOM_API_KEY}`,
+        );
+        const data = await response.json();
+        setEvStations(data.results);
+      } catch (error) {
+        console.error("Error fetching stations:", error);
+      }
     }
-  }, [state.latitude, state.longitude, fetchEvStations]);
+
+    if (state.latitude && state.longitude) {
+      fetchStations();
+    }
+  }, [state.latitude, state.longitude]);
 
   const pins = useMemo(
     () =>
@@ -189,7 +149,7 @@ export default function GlMap() {
                 longitude: station.position.lon,
                 latitude: station.position.lat,
               },
-              index
+              index,
             );
           }}
         >
@@ -200,7 +160,7 @@ export default function GlMap() {
           />
         </Marker>
       )),
-    [evStations, selectedIndex, isPinging, onSelectStation]
+    [evStations, selectedIndex, isPinging, onSelectStation],
   );
 
   if (state.loading) return <Loading />;
@@ -212,9 +172,8 @@ export default function GlMap() {
       initialViewState={{
         longitude: state.longitude as number,
         latitude: state.latitude as number,
-        zoom: 14,
+        zoom: viewport.zoom,
       }}
-      onMoveEnd={handleMoveEnd}
       style={{
         width: "100%",
         height: "95vh",
@@ -238,41 +197,8 @@ export default function GlMap() {
       <FullscreenControl position="top-left" />
       <NavigationControl position="top-left" />
       <ScaleControl position="top-left" />
+      {/* Add the style switcher */}
       <StyleSwitcher onStyleChange={handleStyleChange} />
-      
-      {/* Centered loading spinner */}
-      {isFetching && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20">
-          <div className="rounded-lg bg-white p-4 shadow-lg">
-            <div className="flex items-center gap-3">
-              <svg
-                className="h-6 w-6 animate-spin text-blue-500"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              <span className="text-sm font-medium text-gray-700">
-                Updating stations...
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
       <ControlPanel
         evStations={evStations}
         onSelectStation={onSelectStation}
@@ -288,7 +214,6 @@ export default function GlMap() {
           heading={userHeading}
         />
       )}
-
       {popupInfo && (
         <Popup
           anchor="top"
@@ -298,6 +223,7 @@ export default function GlMap() {
           className="text-blue-500"
         >
           <div className="max-w-sm p-2">
+            {/* Station Name and Categories */}
             <div className="mb-3">
               <h3 className="text-lg font-semibold text-gray-800">
                 {popupInfo.poi.name}
@@ -307,6 +233,7 @@ export default function GlMap() {
               </p>
             </div>
 
+            {/* Connectors */}
             <div className="mb-3">
               <h4 className="mb-1 font-medium text-gray-700">
                 Available Connectors:
@@ -323,6 +250,7 @@ export default function GlMap() {
               </div>
             </div>
 
+            {/* Distance and Address */}
             <div className="mb-3">
               <p className="mb-1 text-sm text-gray-600">
                 <span className="font-medium">Distance:</span>{" "}
@@ -334,6 +262,7 @@ export default function GlMap() {
               </p>
             </div>
 
+            {/* Google Maps Button */}
             <button
               onClick={() => {
                 const url = `https://www.google.com/maps/dir/?api=1&destination=${popupInfo.position.lat},${popupInfo.position.lon}`;
