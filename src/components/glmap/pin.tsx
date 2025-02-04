@@ -14,6 +14,8 @@ const getIconUrl = (name: string) => {
     return "/pluz.png";
   } else if (name.includes("Sharge")) {
     return "/sharge.png";
+  } else if (name.includes("Shell")) {
+    return "/shell.jpg";
   } else if (name.includes("ON-ION")) {
     return "/onion.png";
   } else if (name.includes("Altervim")) {
