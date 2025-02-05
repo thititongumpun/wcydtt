@@ -31,9 +31,10 @@ export default function NaviageteButton({ lat, lon }: NavigateButtonProps) {
     window.open(url, "_blank");
   };
 
-  if (isIOS) {
-    return (
-      <div className="flex w-full flex-col gap-2">
+  // On non-iOS devices, show Google Maps button
+  return (
+    <div className="flex w-full flex-col gap-2">
+      {isIOS && (
         <Button
           onClick={handleAppleMaps}
           className="flex w-full items-center justify-center gap-2 bg-gray-800 text-white hover:bg-gray-900"
@@ -41,13 +42,8 @@ export default function NaviageteButton({ lat, lon }: NavigateButtonProps) {
           <Navigation className="h-4 w-4" />
           Navigate with Apple Maps
         </Button>
-      </div>
-    );
-  }
+      )}
 
-  // On non-iOS devices, show Google Maps button
-  return (
-    <div className="flex w-full flex-col gap-2">
       <Button
         onClick={handleGoogleMaps}
         className="flex w-full items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600"
