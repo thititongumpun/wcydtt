@@ -19,7 +19,7 @@ const getIconUrl = (name: string) => {
   } else if (name.includes("ON-ION")) {
     return "/onion.png";
   } else if (name.includes("Altervim")) {
-    return "/altervim.jpeg";
+    return "/altervim.jpg";
   } else if (name.includes("EA Anywhere")) {
     return "/ea-anywhere.png";
   } else if (name.includes("MG")) {
@@ -44,6 +44,8 @@ const getIconUrl = (name: string) => {
     return "/ginka.png";
   } else if (name.includes("OneCharge")) {
     return "/onecharge.jpeg";
+  } else if (name.includes("Galvanic")) {
+    return "/galvanic.png";
   } else {
     return "https://cdn4.iconfinder.com/data/icons/ev-charger-station/64/EV_Charger-electric_car-ecology-commercial_charging-energy-512.png";
   }

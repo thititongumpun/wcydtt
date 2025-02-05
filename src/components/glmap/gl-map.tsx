@@ -20,6 +20,7 @@ import Loading from "../Loading";
 import StyleSwitcher from "./style-switcher";
 import { useTheme } from "next-themes";
 import _ from "lodash";
+import NaviageteButton from "./navigate-button";
 
 export default function GlMap() {
   const [evStations, setEvStations] = useState<Result[]>([]);
@@ -401,19 +402,10 @@ export default function GlMap() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                const url = `https://www.google.com/maps/dir/?api=1&destination=${popupInfo.position.lat},${popupInfo.position.lon}`;
-                window.open(url, "_blank");
-              }}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-600"
-            >
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.88-2.88 7.19-5 9.88C9.92 16.21 7 11.85 7 9z" />
-                <circle cx="12" cy="9" r="2.5" />
-              </svg>
-              Navigate with Google Maps
-            </button>
+            <NaviageteButton
+              lat={popupInfo.position.lat}
+              lon={popupInfo.position.lon}
+            />
           </div>
         </Popup>
       )}
