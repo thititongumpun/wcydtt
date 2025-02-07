@@ -74,7 +74,7 @@ export default function GlMap() {
         );
 
         // If distance is less than 1km, don't fetch
-        if (distance < 5) {
+        if (distance < 3) {
           console.log(
             "Skipping fetch - distance less than 1km:",
             distance.toFixed(2),
@@ -148,7 +148,7 @@ export default function GlMap() {
     () =>
       _.debounce((lat: number, lon: number) => {
         fetchEvStations(lat, lon);
-      }, 5000),
+      }, 3000),
     [fetchEvStations],
   );
 
